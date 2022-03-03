@@ -1,7 +1,6 @@
 package Implementation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class Allocation {
     private HashMap<Agent, Bundle> alloc;
@@ -24,8 +23,12 @@ public class Allocation {
         alloc = matching;
     }
 
-    public HashMap<Agent, Bundle> getAllocation() {
-        return alloc;
+    public Bundle get(Agent a) {
+        return alloc.get(a);
+    }
+
+    public Set<Agent> getAgents() {
+        return alloc.keySet();
     }
 
 }

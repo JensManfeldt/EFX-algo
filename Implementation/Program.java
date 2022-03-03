@@ -9,15 +9,16 @@ class Program{
     }
 
     public Allocation algorithmeOne(Allocation alloc){
-        HashMap<Agent, Bundle> Z = new HashMap<>(); // need a better solution for ordering
+
+        int n = alloc.getAgents().size(); 
+
+        Bundle[] Z = new Bundle[n]; 
         
-        for(Agent a : alloc.getAllocation().keySet()) {
-            Z.put(a, alloc.getAllocation().get(a));
+        for(Agent a : alloc.getAgents()) {
+            Z[a.getNumber()] = alloc.get(a);            
         }
 
-        int n = alloc.getAllocation().keySet().size(); 
-        
-        EfxFeasibilityGraph G = new EfxFeasibilityGraph(Z); 
+        EfxFeasibilityGraph G = new EfxFeasibilityGraph(alloc.getAgents(), Z); 
 
         Set<Bundle> T = new HashSet<Bundle>();
 
@@ -42,7 +43,7 @@ class Program{
             }
             
             Agent unmatchedAgent = null;
-            for(Agent a :  alloc.getAllocation().keySet()) {
+            for(Agent a :  alloc.getAgents()) {
                 if(!agentsMatched.contains(a)) {
                     unmatchedAgent = a;
                     continue; // Stop the loop??? 
@@ -53,13 +54,35 @@ class Program{
 
             T.add(robustBundle);
 
+            G.update(robustBundle);
 
         }
 
     }
 
-    private Bundle findRobustDemandAndRemoveItem(Agent unmatchedAgent, HashMap<Agent, Bundle> z) {
-        return null;
+    private Bundle findRobustDemandAndRemoveItem(Agent unmatchedAgent, Bundle[] z) {
+
+        Bundle candidateBundle = z[0]; // Shpuld be something
+        Item worstItemInCandidate = null;
+
+        for(int i = 0 ; i < z.length ; i++) {
+            Bundle b = z[i]; 
+            ArrayList<Item> items = b.getItems(); 
+            Item leastValuedItem = items.get(0);
+            for(int j = 1 ; j < items.size() ; j++) {
+                if(unmatchedAgent.v(items.get(j)) < unmatchedAgent.v(leastValuedItem)) {
+                    leastValuedItem = items.get(j);
+                }
+            }
+            if(unmatchedAgent.v(b) - unmatchedAgent.v(leastValuedItem) > unmatchedAgent.v(candidateBundle)) {
+                candidateBundle = b;
+                worstItemInCandidate = leastValuedItem;
+            }   
+        }
+        
+        candidateBundle.removeItem(worstItemInCandidate);
+
+        return candidateBundle;
     }
 
     private Set<Edge> findMatching(EfxFeasibilityGraph g) {
