@@ -4,11 +4,18 @@ import java.util.*;
 
 public class EfxFeasibilityGraph {
 
-    public EfxFeasibilityGraph(Set<Agent> set, Bundle[] z) {
+    boolean[][] edges;
+
+    public EfxFeasibilityGraph(Agent[] agents, Bundle[] z) {
+
+        int n = agents.length;
+        
+        edges = new boolean[n][n];
+        
 
     }
 
-    public void update(Bundle robustBundle) {
+    public void update(int robustBundleIndex, boolean[] touchedBundles) {
 
     }
 

@@ -13,18 +13,21 @@ class Program{
         int n = alloc.getAgents().size(); 
 
         Bundle[] Z = new Bundle[n]; 
+        Agent[] agents = new Agent[n];
         
         for(Agent a : alloc.getAgents()) {
-            Z[a.getNumber()] = alloc.get(a);            
+            int number = a.getNumber();
+            agents[number] = a;
+            Z[number] = alloc.get(a);            
         }
 
-        EfxFeasibilityGraph G = new EfxFeasibilityGraph(alloc.getAgents(), Z); 
+        EfxFeasibilityGraph G = new EfxFeasibilityGraph(agents, Z); 
 
-        Set<Bundle> T = new HashSet<Bundle>();
+        boolean[] touchedBundles = new boolean[n];
 
         while(true){
 
-            Set<Edge> M = findMatching(G);  
+            Set<Edge> M = findMatching(G);  // does not end by returning this
 
             Set<Agent> agentsMatched = new HashSet<Agent>(); 
             for(Edge e : M) {
@@ -43,26 +46,26 @@ class Program{
             }
             
             Agent unmatchedAgent = null;
-            for(Agent a :  alloc.getAgents()) {
+            for(Agent a :  agents) {
                 if(!agentsMatched.contains(a)) {
                     unmatchedAgent = a;
                     continue; // Stop the loop??? 
                 }
             }
 
-            Bundle robustBundle = findRobustDemandAndRemoveItem(unmatchedAgent, Z);
+            int robustBundle = findRobustDemandAndRemoveItem(unmatchedAgent, Z);
 
-            T.add(robustBundle);
+            touchedBundles[robustBundle] = true;
 
-            G.update(robustBundle);
+            G.update(robustBundle, touchedBundles);
 
         }
 
     }
 
-    private Bundle findRobustDemandAndRemoveItem(Agent unmatchedAgent, Bundle[] z) {
+    private int findRobustDemandAndRemoveItem(Agent unmatchedAgent, Bundle[] z) {
 
-        Bundle candidateBundle = z[0]; // Shpuld be something
+        int candidateBundleIndex = 0; // Shpuld be something
         Item worstItemInCandidate = null;
 
         for(int i = 0 ; i < z.length ; i++) {
@@ -74,15 +77,15 @@ class Program{
                     leastValuedItem = items.get(j);
                 }
             }
-            if(unmatchedAgent.v(b) - unmatchedAgent.v(leastValuedItem) > unmatchedAgent.v(candidateBundle)) {
-                candidateBundle = b;
+            if(unmatchedAgent.v(b) - unmatchedAgent.v(leastValuedItem) > unmatchedAgent.v(z[candidateBundleIndex])) {
+                candidateBundleIndex = i;
                 worstItemInCandidate = leastValuedItem;
             }   
         }
         
-        candidateBundle.removeItem(worstItemInCandidate);
+        z[candidateBundleIndex].removeItem(worstItemInCandidate);
 
-        return candidateBundle;
+        return candidateBundleIndex;
     }
 
     private Set<Edge> findMatching(EfxFeasibilityGraph g) {
