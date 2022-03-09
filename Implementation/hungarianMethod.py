@@ -56,7 +56,7 @@ def findMatchingRec(fm, coloumIndex):
                 for j in range(len(listOfIndexSolutions)): # Keep trac of the index(s) in the real matrix
                     listOfIndexSolutions[j][0] += 1
                     temp = listOfIndexSolutions[j][1]
-                    listOfIndexSolutions[j][1] = temp+1 if temp > i else temp 
+                    listOfIndexSolutions[j][1] = temp+1 if temp >= i else temp 
                 
                 listOfIndexSolutions.append([0,i])
                 return True, listOfIndexSolutions
@@ -64,9 +64,15 @@ def findMatchingRec(fm, coloumIndex):
     return False, [[-1,-1]] #Not a path with a solution 
 
 
-feasibltyMatrix = [[0,15,0],[17,0,0],[0,24,88]]
+feasibltyMatrix = [[0,15,0],
+                    [17,0,0],
+                    [0,24,88]]
+feasibltyMatrix2 = [[15,0,0],
+                    [0,0,17],
+                    [24,0,88]]
 
-solver = Solver(feasibltyMatrix)
+
+solver = Solver(feasibltyMatrix2)
 
 print(findMatching(solver.fm))
 
