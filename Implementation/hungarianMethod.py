@@ -11,16 +11,47 @@ class Solver:
 
     def solveMatchingWithHungarianMethod(self,feasibalityMatrix):
         
-        # Find min in each row and subtract from each entry in that row
+
+        # Step 1 : Find min in each row and subtract from each entry in that row
         rowMins = self.fm.min(axis=1)
         self.fm = self.fm.T - rowMins # yikes there must be a better way 
 
-        # Find min in each coloum and subtract
+        # Step 2 : Find min in each coloum and subtract
         self.fm = self.fm.T #yikes
         coloumMins = self.fm.min(axis=0)
         self.fm = self.fm - coloumMins
 
-        #Cover 0 with min number of lines not known yet
+        #while loop     
+        while True:
+             # Step 3 : a) Cover 0 with min number of lines not known yet
+
+            coveredRows = []
+            coveredColoums = []
+            mininal = sum(coveredRows) + sum(coveredColoums)
+
+            # Step 3 b) if minimal = n find matching
+            if mininal == self.n:
+                return findMatching(self.fm)
+
+            # Step 4 : Create additional 0 if needed
+            bestMin = np.infty
+            for i in range(self.n):
+                for j in range(self.n):
+                    if not (coveredRows[i] and coveredColoums[j]):
+                        bestMin = np.min(self.fm[i,j], bestMin)
+                    
+            for i in range(self.n):
+                if not coveredRows[i]:
+                    self.fm[i,:] -= bestMin
+                if coveredColoums[i]:
+                    self.fm[:,i] += bestMin
+
+
+        
+
+
+
+
 
     
 def findMatching(fm):
@@ -33,10 +64,10 @@ def findMatching(fm):
                 for j in range(len(listOfIndexSolutions)): # Keep trac of the index(s) in the real matrix
                     listOfIndexSolutions[j][0] += 1
                     temp = listOfIndexSolutions[j][1]
-                    listOfIndexSolutions[j][1] = temp+1 if temp > i else temp 
+                    listOfIndexSolutions[j][1] = temp+1 if temp >= i else temp 
                 
                 listOfIndexSolutions.append([0,i])
-                return True, listOfIndexSolutions
+                return listOfIndexSolutions
 
 
 def findMatchingRec(fm, coloumIndex):
