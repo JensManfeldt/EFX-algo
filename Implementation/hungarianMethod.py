@@ -1,3 +1,4 @@
+import re
 import numpy as np
 
 class Solver:
@@ -6,32 +7,76 @@ class Solver:
         self.fm = np.array(feasibalityMatrix)
 
         self.n = self.fm.shape[0]
+
+        self.markedRow = np.zeros(self.n)
+        self.markedColoum = np.zeros(self.n)
+        self.assignedRows = -np.ones(self.n)
     
 
 
-    def solveMatchingWithHungarianMethod(self,feasibalityMatrix):
+    def solveMatchingWithHungarianMethod(self):
+
+        # Step 0 : Convert max problem to min problem 
+        # Find max value and subtract each entry from max value
+        max = np.max(self.fm)
+        self.fm = max - self.fm
         
+        print("Step 0 : \n")
+        print(self.fm)
 
         # Step 1 : Find min in each row and subtract from each entry in that row
+        for i in range(self.n):
+            row = self.fm[i,:]
+            row = row - np.min(row)
+            
+        
         rowMins = self.fm.min(axis=1)
         self.fm = self.fm.T - rowMins # yikes there must be a better way 
 
-        # Step 2 : Find min in each coloum and subtract
         self.fm = self.fm.T #yikes
+        print("Step 1: \n")
+        print(self.fm)
+
+        # Step 2 : Find min in each coloum and subtract
+        
         coloumMins = self.fm.min(axis=0)
         self.fm = self.fm - coloumMins
+
+        print("Step 2: \n")
+        print(self.fm)
 
         #while loop     
         while True:
              # Step 3 : a) Cover 0 with min number of lines not known yet
+            
 
-            coveredRows = []
-            coveredColoums = []
-            mininal = sum(coveredRows) + sum(coveredColoums)
+            coveredRows, coveredColoums = self.findMiniamlCover()
+            print("Step 3: \n")
+            print(self.fm)
+            
+            print(coveredRows)
+            print(coveredColoums)
+            minimal = sum(coveredRows) + sum(coveredColoums)
 
             # Step 3 b) if minimal = n find matching
-            if mininal == self.n:
-                return findMatching(self.fm)
+            print("minimal")
+            print(minimal)
+            if minimal == self.n:
+                # check indexs in result is not 0 in orgianl 
+                result = findMatching(self.fm) 
+                #print("Result")
+                #print(result)
+                markedIndexs = []
+                for i in range(len(result)):
+                    if self.fm[result[i][0],result[i][1]] == 0:
+                        markedIndexs.append(i)  
+                
+                #for i in range(len(markedIndexs)-1, -1, -1):
+                #    temp = result[markedIndexs[i]]
+                #    if self.fm[temp[0],temp[1]] == 0: # Is not an edge in orginal
+                #        del result[markedIndexs[i]] 
+                    
+                return result
 
             # Step 4 : Create additional 0 if needed
             bestMin = np.infty
@@ -46,12 +91,45 @@ class Solver:
                 if coveredColoums[i]:
                     self.fm[:,i] += bestMin
 
-
+            
+    def findMiniamlCover(self):
         
+        crossedColoums = np.zeros(self.n) # False
 
+        for i in range(self.n):
+            for j in range(self.n):
+                if self.fm[i,j] == 0 and not crossedColoums[j]:
+                    self.assignedRows[i] = j 
+                    crossedColoums[j] = 1 # True
+                    break
+            
+        for i in range(self.n):
+            if self.assignedRows[i] == -1 and not self.markedRow[i]:
+                self.markRow(i)
+        
+        print("Marked Coloum")
+        print(self.markedColoum)
+        print("marked row")
+        print(self.markedRow)
+        print("Assigned Row")
+        print(self.assignedRows)
+        print("covered coloums")
+        print(crossedColoums)
+        return self.markedColoum, 1 - self.markedRow # python magic
 
+    def markRow(self,rowIndex):
+        self.markedRow[rowIndex] = 1
+        row = self.fm[rowIndex,:]
+        for j in range(self.n):
+            if row[j] == 0 and not self.markedColoum[j]:
+                self.markColoum(j)
 
-
+    def markColoum(self,coloumIndex):
+        self.markedColoum[coloumIndex] = 1
+        coloum = self.fm[:,coloumIndex]
+        for i in range(self.n):
+            if self.assignedRows[i] == coloumIndex and not self.markedRow[i]:
+                self.markRow(i)
 
     
 def findMatching(fm):
@@ -67,7 +145,7 @@ def findMatching(fm):
                     listOfIndexSolutions[j][1] = temp+1 if temp >= i else temp 
                 
                 listOfIndexSolutions.append([0,i])
-                return listOfIndexSolutions
+                return listOfIndexSolutions # List of Tuples with coordinates
 
 
 def findMatchingRec(fm, coloumIndex):
@@ -101,9 +179,28 @@ feasibltyMatrix = [[0,15,0],
 feasibltyMatrix2 = [[15,0,0],
                     [0,0,17],
                     [24,0,88]]
+feasibltyMatrix3 = [[0,4,3],
+                    [4,0,3],
+                    [1,0,0]]
 
+feasibltyMatrix3 = [[0,4,3],
+                    [4,0,3],
+                    [1,0,0]]
 
-solver = Solver(feasibltyMatrix2)
+feasibltyMatrix4 = [[108,125,150],
+                    [150,135,175],
+                    [122,148,250]]
 
-print(findMatching(solver.fm))
+feasibltyMatrix5 = [[17,0,0],
+                    [0,15,0],
+                    [103,77,0]]
+
+#print(250 - np.array(feasibltyMatrix5))
+
+solver = Solver(feasibltyMatrix4)
+
+#print(findMatching(solver.fm))
+print(solver.solveMatchingWithHungarianMethod())
+
+#print(findMatching(solver.fm))
 
