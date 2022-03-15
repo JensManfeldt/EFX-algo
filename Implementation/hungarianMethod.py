@@ -1,3 +1,4 @@
+from pickletools import read_uint1
 import re
 import numpy as np
 
@@ -11,8 +12,7 @@ class Solver:
         self.markedRow = np.zeros(self.n)
         self.markedColoum = np.zeros(self.n)
         self.assignedRows = -np.ones(self.n)
-    
-
+        self.zeroesLocationInRow = [] 
 
     def solveMatchingWithHungarianMethod(self):
 
@@ -49,7 +49,6 @@ class Solver:
         while True:
              # Step 3 : a) Cover 0 with min number of lines not known yet
             
-
             coveredRows, coveredColoums = self.findMiniamlCover()
             print("Step 3: \n")
             print(self.fm)
@@ -71,10 +70,10 @@ class Solver:
                     if self.fm[result[i][0],result[i][1]] == 0:
                         markedIndexs.append(i)  
                 
-                #for i in range(len(markedIndexs)-1, -1, -1):
-                #    temp = result[markedIndexs[i]]
-                #    if self.fm[temp[0],temp[1]] == 0: # Is not an edge in orginal
-                #        del result[markedIndexs[i]] 
+                for i in range(len(markedIndexs)-1, -1, -1):
+                    temp = result[markedIndexs[i]]
+                    if self.fm[temp[0],temp[1]] == 0: # Is not an edge in orginal
+                        del result[markedIndexs[i]] 
                     
                 return result
 
@@ -131,7 +130,52 @@ class Solver:
             if self.assignedRows[i] == coloumIndex and not self.markedRow[i]:
                 self.markRow(i)
 
-    
+    def findMatchingAlternative(self): 
+        self.zeroesLocationInRow = [] 
+
+        for i in range(self.n):
+            zeroes = []
+            for j in range(n):
+                if self.fm[i][j] == 0:
+                    zeroes.append(j)
+            self.zeroesLocationInRow.append(zeroes) 
+        
+        self.collumTakenBy = np.zeros(self.n)
+
+        self.searchForMatching(0, 0)
+  
+        results = []
+        for j in range (self.n): 
+            results.append([self.collumTakenBy[j], j])
+
+        return results
+
+
+    def searchForMatching(self, row, zeroNumber):
+        zeroIndex = self.zeroesLocationInRow[row][zeroNumber]
+        if self.collumTakenBy[zeroIndex]:
+            if len(self.zeroesLocationInRow[row][zeroNumber]) - 1 > zeroNumber:
+                return self.searchForMatching(row, zeroNumber+1)
+            else:
+                return False
+        else: 
+            self.collumTakenBy[zeroIndex] = row
+            if row + 1 < self.n:
+                bool = self.searchForMatching(row + 1, 0)
+                if bool: 
+                    return True
+                else: 
+                    self.collumTakenBy[zeroIndex] = 0
+                    if len(self.zeroesLocationInRow[row][zeroNumber]) - 1 > zeroNumber:
+                        return self.searchForMatching(row, zeroNumber+1)
+                    else:
+                        return False
+            else:
+                return True
+
+
+
+
 def findMatching(fm):
     
     #find first 0 in row 0 of fm
@@ -171,6 +215,10 @@ def findMatchingRec(fm, coloumIndex):
                 return True, listOfIndexSolutions
         
     return False, [[-1,-1]] #Not a path with a solution 
+
+
+
+
 
 
 feasibltyMatrix = [[0,15,0],
