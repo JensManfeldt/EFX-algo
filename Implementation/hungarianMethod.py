@@ -1,6 +1,7 @@
 from pickletools import read_uint1
 import re
 import numpy as np
+import sys
 
 class Solver:
     def __init__(self, feasibalityMatrix):
@@ -15,6 +16,8 @@ class Solver:
         self.zeroesLocationInRow = [] 
 
     def solveMatchingWithHungarianMethod(self):
+
+        fmOrigianl = np.matrix.copy(self.fm)
 
         # Step 0 : Convert max problem to min problem 
         # Find max value and subtract each entry from max value
@@ -53,59 +56,67 @@ class Solver:
             print("Step 3: \n")
             print(self.fm)
             
-            print(coveredRows)
-            print(coveredColoums)
             minimal = sum(coveredRows) + sum(coveredColoums)
 
             # Step 3 b) if minimal = n find matching
             print("minimal")
             print(minimal)
             if minimal == self.n:
-                # check indexs in result is not 0 in orgianl 
-                result = findMatching(self.fm) 
+                
+                result = findMatching(self.fm)
                 #print("Result")
                 #print(result)
+                # check indexs in result is not 0 in orgianl 
                 markedIndexs = []
                 for i in range(len(result)):
-                    if self.fm[result[i][0],result[i][1]] == 0:
+                    temp = result[i]
+                    if self.fm[temp[0],temp[1]] == 0:
                         markedIndexs.append(i)  
                 
                 for i in range(len(markedIndexs)-1, -1, -1):
                     temp = result[markedIndexs[i]]
-                    if self.fm[temp[0],temp[1]] == 0: # Is not an edge in orginal
+                    if fmOrigianl[temp[0],temp[1]] == 0: # Is not an edge in orginal
                         del result[markedIndexs[i]] 
                     
                 return result
-
+            
             # Step 4 : Create additional 0 if needed
-            bestMin = np.infty
+            bestMin = sys.maxsize # largest interger
             for i in range(self.n):
                 for j in range(self.n):
-                    if not (coveredRows[i] and coveredColoums[j]):
-                        bestMin = np.min(self.fm[i,j], bestMin)
-                    
+                    if not (coveredRows[i] or coveredColoums[j]):
+                        temp = self.fm[i,j]
+                        if temp < bestMin: 
+                            bestMin = temp
+
             for i in range(self.n):
-                if not coveredRows[i]:
+                if coveredRows[i] == 0:
                     self.fm[i,:] -= bestMin
-                if coveredColoums[i]:
+                if coveredColoums[i] == 1:
                     self.fm[:,i] += bestMin
 
-            
+
     def findMiniamlCover(self):
         
         crossedColoums = np.zeros(self.n) # False
 
+        self.markedRow = np.zeros(self.n)
+        self.markedColoum = np.zeros(self.n)
+        self.assignedRows = np.zeros(self.n) -1 
+
         for i in range(self.n):
             for j in range(self.n):
-                if self.fm[i,j] == 0 and not crossedColoums[j]:
-                    self.assignedRows[i] = j 
-                    crossedColoums[j] = 1 # True
-                    break
-            
+                if self.fm[i,j] == 0 and crossedColoums[j] == 0:
+                    self.assignedRows[i] = j
+                    crossedColoums[j] = 1   
+                    break  
+
         for i in range(self.n):
-            if self.assignedRows[i] == -1 and not self.markedRow[i]:
-                self.markRow(i)
+            if self.assignedRows[i] == -1 and self.markedRow[i] == 0:
+                self.markRow(i)         
         
+        print("\n\n\n")
+        print(self.fm)
         print("Marked Coloum")
         print(self.markedColoum)
         print("marked row")
@@ -114,7 +125,8 @@ class Solver:
         print(self.assignedRows)
         print("covered coloums")
         print(crossedColoums)
-        return self.markedColoum, 1 - self.markedRow # python magic
+        print("\n\n\n")
+        return 1 - self.markedRow, self.markedColoum # python magic
 
     def markRow(self,rowIndex):
         self.markedRow[rowIndex] = 1
@@ -135,7 +147,7 @@ class Solver:
 
         for i in range(self.n):
             zeroes = []
-            for j in range(n):
+            for j in range(self.n):
                 if self.fm[i][j] == 0:
                     zeroes.append(j)
             self.zeroesLocationInRow.append(zeroes) 
@@ -146,7 +158,7 @@ class Solver:
   
         results = []
         for j in range (self.n): 
-            results.append([self.collumTakenBy[j], j])
+            results.append([int(self.collumTakenBy[j]), j])
 
         return results
 
@@ -217,10 +229,6 @@ def findMatchingRec(fm, coloumIndex):
     return False, [[-1,-1]] #Not a path with a solution 
 
 
-
-
-
-
 feasibltyMatrix = [[0,15,0],
                     [17,0,0],
                     [0,24,88]]
@@ -243,9 +251,16 @@ feasibltyMatrix5 = [[17,0,0],
                     [0,15,0],
                     [103,77,0]]
 
+feasibltyMatrix6 =[[28, 10, 48, 23, 20],
+                   [17, 18, 49, 20, 15],
+                   [39, 89, 34, 69, 39],
+                   [34, 20, 50, 38, 48],
+                   [23, 92, 4, 93, 12]]
+
+
 #print(250 - np.array(feasibltyMatrix5))
 
-solver = Solver(feasibltyMatrix4)
+solver = Solver(feasibltyMatrix5)
 
 #print(findMatching(solver.fm))
 print(solver.solveMatchingWithHungarianMethod())
