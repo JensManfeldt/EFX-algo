@@ -1,5 +1,3 @@
-from pickletools import read_uint1
-import re
 import numpy as np
 import sys
 
@@ -24,8 +22,8 @@ class Solver:
         max = np.max(self.fm)
         self.fm = max - self.fm
         
-        print("Step 0 : \n")
-        print(self.fm)
+        #print("Step 0 : \n")
+        #print(self.fm)
 
         # Step 1 : Find min in each row and subtract from each entry in that row
         for i in range(self.n):
@@ -37,33 +35,33 @@ class Solver:
         self.fm = self.fm.T - rowMins # yikes there must be a better way 
 
         self.fm = self.fm.T #yikes
-        print("Step 1: \n")
-        print(self.fm)
+        #print("Step 1: \n")
+        #print(self.fm)
 
         # Step 2 : Find min in each coloum and subtract
         
         coloumMins = self.fm.min(axis=0)
         self.fm = self.fm - coloumMins
 
-        print("Step 2: \n")
-        print(self.fm)
+        #print("Step 2: \n")
+        #print(self.fm)
 
         #while loop     
         while True:
              # Step 3 : a) Cover 0 with min number of lines not known yet
             
             coveredRows, coveredColoums = self.findMiniamlCover()
-            print("Step 3: \n")
-            print(self.fm)
+            #print("Step 3: \n")
+            #print(self.fm)
             
             minimal = sum(coveredRows) + sum(coveredColoums)
 
             # Step 3 b) if minimal = n find matching
-            print("minimal")
-            print(minimal)
+            #print("minimal")
+            #print(minimal)
             if minimal == self.n:
                 
-                result = findMatching(self.fm)
+                result = self.findMatchingAlternative()
                 #print("Result")
                 #print(result)
                 # check indexs in result is not 0 in orgianl 
@@ -115,17 +113,17 @@ class Solver:
             if self.assignedRows[i] == -1 and self.markedRow[i] == 0:
                 self.markRow(i)         
         
-        print("\n\n\n")
-        print(self.fm)
-        print("Marked Coloum")
-        print(self.markedColoum)
-        print("marked row")
-        print(self.markedRow)
-        print("Assigned Row")
-        print(self.assignedRows)
-        print("covered coloums")
-        print(crossedColoums)
-        print("\n\n\n")
+        #print("\n\n\n")
+        #print(self.fm)
+        #print("Marked Coloum")
+        #print(self.markedColoum)
+        #print("marked row")
+        #print(self.markedRow)
+        #print("Assigned Row")
+        #print(self.assignedRows)
+        #print("covered coloums")
+        #print(crossedColoums)
+        #print("\n\n\n")
         return 1 - self.markedRow, self.markedColoum # python magic
 
     def markRow(self,rowIndex):
@@ -152,7 +150,10 @@ class Solver:
                     zeroes.append(j)
             self.zeroesLocationInRow.append(zeroes) 
         
-        self.collumTakenBy = np.zeros(self.n)
+        #print("Zeroes Locations")
+        #print(self.zeroesLocationInRow)
+
+        self.collumTakenBy = np.zeros(self.n) -1
 
         self.searchForMatching(0, 0)
   
@@ -165,8 +166,12 @@ class Solver:
 
     def searchForMatching(self, row, zeroNumber):
         zeroIndex = self.zeroesLocationInRow[row][zeroNumber]
-        if self.collumTakenBy[zeroIndex]:
-            if len(self.zeroesLocationInRow[row][zeroNumber]) - 1 > zeroNumber:
+
+        #print("Now trying zero:")
+        #print(row, zeroIndex)
+        
+        if self.collumTakenBy[zeroIndex] != -1: 
+            if len(self.zeroesLocationInRow[row]) - 1 > zeroNumber:
                 return self.searchForMatching(row, zeroNumber+1)
             else:
                 return False
@@ -260,10 +265,10 @@ feasibltyMatrix6 =[[28, 10, 48, 23, 20],
 
 #print(250 - np.array(feasibltyMatrix5))
 
-solver = Solver(feasibltyMatrix5)
+#solver = Solver(feasibltyMatrix6)
 
 #print(findMatching(solver.fm))
-print(solver.solveMatchingWithHungarianMethod())
+#print(solver.solveMatchingWithHungarianMethod())
 
 #print(findMatching(solver.fm))
 
