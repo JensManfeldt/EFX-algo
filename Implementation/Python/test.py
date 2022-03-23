@@ -16,7 +16,7 @@ class Test(unittest.TestCase):
         solver = efxSolver.EFXSolver(agentValueations,bundleAssignemnts)
         matching, donationList = solver.findEFX()
         np.testing.assert_array_equal(matching,np.array([[1,0],[0,1]]))
-        np.testing.assert_array_equal(donationList,np.array([]))
+        np.testing.assert_array_equal(donationList,np.array([0,0]))
 
     def test_BadAssignmentSimple(self):
         bundleAssignemnts = np.array([[0,1],
@@ -27,7 +27,7 @@ class Test(unittest.TestCase):
         solver = efxSolver.EFXSolver(agentValueations,bundleAssignemnts)
         matching, donationList = solver.findEFX()
         np.testing.assert_array_equal(matching,np.array([[1,0],[0,1]]))
-        np.testing.assert_array_equal(donationList,np.array([]))
+        np.testing.assert_array_equal(donationList,np.array([0,0]))
 
     def test_DonationWorks(self):
         agentValueations = np.array([[1, 5, 4, 3, 7],
@@ -44,7 +44,7 @@ class Test(unittest.TestCase):
         matching, donationList = solver.findEFX()
         
         np.testing.assert_array_equal(matching,np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]]))
-        np.testing.assert_array_equal(donationList,np.array([1]))
+        np.testing.assert_array_equal(donationList,np.array([0,1,0,0,0]))
 
     def test_AssignmentWithAnAgentNotGettingOrginalBundle(self):
         agentValueations = np.array([[1, 5, 4, 3, 7, 2],
@@ -61,7 +61,25 @@ class Test(unittest.TestCase):
         matching, donationList = solver.findEFX()
         
         np.testing.assert_array_equal(matching,np.array([[1,0,0,0],[0,0,0,1],[0,0,1,0],[0,1,0,0]]))
-        np.testing.assert_array_equal(donationList,np.array([1]))
+        np.testing.assert_array_equal(donationList,np.array([0,1,0,0,0,0]))
+
+    def test_CaseWithTwoDonations(self):
+        agentValueations = np.array([[3, 2, 1, 1, 1],
+                                     [3, 2, 1, 1, 1], 
+                                     [3, 2, 1, 1, 1]])
+
+        bundleAssignemnts = np.array([[1, 1, 1, 0, 0],
+                                      [0, 0, 0, 1, 0],
+                                      [0, 0, 0, 0, 1]])
+
+        solver = efxSolver.EFXSolver(agentValueations,bundleAssignemnts)
+        matching, donationList = solver.findEFX()
+
+        np.testing.assert_array_equal(matching,np.array([[1,0,0],[0,1,0],[0,0,1]]))
+        np.testing.assert_array_equal(donationList,np.array([0,1,1,0,0]))
+
+    
+
 
 if __name__ == '__main__':
     unittest.main()

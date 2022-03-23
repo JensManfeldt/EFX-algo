@@ -13,8 +13,8 @@ class EFXSolver:
         self.t = np.zeros(self.n)
         self.feasibilityGraph = np.zeros([self.n,self.n])
         self.EFXMaxIndex = -np.ones(self.n)
-        self.donationList = np.array([],dtype=int)
-        self.DonationCounter = 0
+        self.donationList = np.zeros(self.bundleAssigment.shape[1],dtype=int)
+
     
     def findEFX(self):
 
@@ -45,10 +45,9 @@ class EFXSolver:
                if not (i in agentsMatched):
                    unmatchedAgent = i
                    break
-            self.DonationCounter += 1
+
             touchedBundle = self.findRobustDemandAndDonate(unmatchedAgent)
-            #if self.DonationCounter == 2:
-            #    return 
+
             self.t[touchedBundle] = 1
 
             self.updateFeasibilityGraph(touchedBundle)
@@ -108,7 +107,7 @@ class EFXSolver:
         
         self.bundleAssigment[:,leastValuedItemIndex] = 0 # make item k part of no bundle
 
-        self.donationList = np.append(self.donationList,leastValuedItemIndex)
+        self.donationList[leastValuedItemIndex] = 1
         print("donation list")
         print(self.donationList)
         self.agentEvalOfBundle[:,bundleToTouch] -= self.agentsEval[:,leastValuedItemIndex] # Remove from bundle valueations
@@ -206,16 +205,23 @@ bundles2 = np.array([[0, 0, 0, 0, 1],
                     [1, 0, 0, 0, 0], 
                     [0, 0, 0, 1, 0]])
 
-agentValueations = np.array([[1, 5, 4, 3, 7, 2],
-                                     [3, 7, 4, 4, 1, 8], 
-                                     [8, 8, 1, 3, 6, 2], 
-                                     [2, 1, 9, 2, 3, 3]])
+agentValueations = np.array([[3, 2, 1, 1, 1],
+                                     [3, 2, 1, 1, 1], 
+                                     [3, 2, 1, 1, 1]])
 
-bundleAssignemnts = np.array([[0, 0, 0, 0, 1, 0],
-                                      [0, 1, 1, 0, 0, 0],
-                                      [1, 0, 0, 0, 0, 0], 
-                                      [0, 0, 0, 1, 0, 1]])
+bundleAssignemnts = np.array([[1, 1, 1, 0, 0],
+                                      [0, 0, 0, 1, 0],
+                                      [0, 0, 0, 0, 1]])
 
 
 solver = EFXSolver(agentValueations, bundleAssignemnts)
 print(solver.findEFX())
+
+bundleAssignemnts = np.array([[0, 0, 0, 0, 1, 0],
+                                      [0, 0, 1, 0, 0, 0],
+                                      [1, 0, 0, 0, 0, 0], 
+                                      [0, 0, 0, 1, 0, 1]])
+
+y = np.array([[1,0,0,0],[0,0,0,1],[0,0,1,0],[0,1,0,0]])
+
+print(y @ bundleAssignemnts)
