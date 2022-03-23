@@ -16,6 +16,8 @@ class Solver:
     def solveMatchingWithHungarianMethod(self):
 
         fmOrigianl = np.matrix.copy(self.fm)
+        print("FM as given")
+        print(fmOrigianl)
 
         # Step 0 : Convert max problem to min problem 
         # Find max value and subtract each entry from max value
@@ -71,12 +73,14 @@ class Solver:
                     if self.fm[temp[0],temp[1]] == 0:
                         markedIndexs.append(i)  
                 
+
+
                 for i in range(len(markedIndexs)-1, -1, -1):
                     temp = result[markedIndexs[i]]
                     if fmOrigianl[temp[0],temp[1]] == 0: # Is not an edge in orginal
                         del result[markedIndexs[i]] 
-                print("hungraian reusult")
-                print(result)
+
+
                 return result
             
             # Step 4 : Create additional 0 if needed

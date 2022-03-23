@@ -13,6 +13,8 @@ class EFXSolver:
         self.t = np.zeros(self.n)
         self.feasibilityGraph = np.zeros([self.n,self.n])
         self.EFXMaxIndex = -np.ones(self.n)
+        self.donationList = np.array([],dtype=int)
+        self.DonationCounter = 0
     
     def findEFX(self):
 
@@ -20,19 +22,20 @@ class EFXSolver:
         print(self.agentEvalOfBundle)
 
         self.feasibilityGraph = self.buildFeasibilityGraph()
-
-        print("FG")
-        print(self.feasibilityGraph)
-
         
 
 
         while True:
-            matchingSolver = hungarianMethod.Solver(self.feasibilityGraph)
+            matchingSolver = hungarianMethod.Solver(np.matrix.copy(self.feasibilityGraph))
             matching = np.array(matchingSolver.solveMatchingWithHungarianMethod())
             #print(self.feasibilityGraph)
             if len(matching) == self.n: 
-                return matching # Someting more has to happen 
+                returnMatrix = np.zeros([self.n,self.n])
+                returnMatrix[matching[:,0],matching[:,1]] = 1
+                print("ReturnMatrix")
+                print(returnMatrix)
+
+                return returnMatrix,self.donationList # Someting more has to happen 
         
             unmatchedAgent = -1
             agentsMatched = matching[:,0]
@@ -42,9 +45,10 @@ class EFXSolver:
                if not (i in agentsMatched):
                    unmatchedAgent = i
                    break
-
+            self.DonationCounter += 1
             touchedBundle = self.findRobustDemandAndDonate(unmatchedAgent)
-
+            #if self.DonationCounter == 2:
+            #    return 
             self.t[touchedBundle] = 1
 
             self.updateFeasibilityGraph(touchedBundle)
@@ -63,6 +67,8 @@ class EFXSolver:
                 for k in range(self.agentsEval.shape[1]):
                     if agentValueofItemsInBundle[k] > 0 and agentValueofItemsInBundle[k] < leastValuedItem:
                         leastValuedItem = agentValueofItemsInBundle[k]
+                if self.agentEvalOfBundle.shape[1] == 0:
+                    leastValuedItem = 0
                 self.agentsEFXValueations[i,j] = sum(agentValueofItemsInBundle) - leastValuedItem
                 #efxmax = max(efxmax, self.agentsEFXValueation[i,j])
         
@@ -74,20 +80,24 @@ class EFXSolver:
             
             for j in range(self.n):
                 if self.agentEvalOfBundle[i,j] >= efxmax and self.agentEvalOfBundle[i,j] > originalBundleValuation:
-                    self.feasibilityGraph[i,j] = pow(self.n,4) if self.t[j] == 1 else 1 
+                    self.feasibilityGraph[i,j] = 1 
 
             if self.agentEvalOfBundle[i,i] >= efxmax: 
-                self.feasibilityGraph[i,i] = pow(self.n, 4) + pow(self.n, 2) if self.t[i] == 1 else pow(self.n, 2)
+                self.feasibilityGraph[i,i] = pow(self.n, 2)
         
+        print("EFX max index init")
+        print(self.EFXMaxIndex)
+        print("Agents EFX Valueations init")
+        print(self.agentsEFXValueations)
         return self.feasibilityGraph
 
     def findRobustDemandAndDonate(self,unMatchedAgent):
         print("Unmatched agent")
         print(unMatchedAgent)
-        bundleRemoveFromIndex = -1
         
-        efxMaxForUnMatchedAgentIndex = int(self.EFXMaxIndex[unMatchedAgent])
-        temp = self.agentsEval[unMatchedAgent,:] * self.bundleAssigment[efxMaxForUnMatchedAgentIndex,:]
+        
+        bundleToTouch = int(self.EFXMaxIndex[unMatchedAgent])
+        temp = self.agentsEval[unMatchedAgent,:] * self.bundleAssigment[bundleToTouch,:]
 
         leastValuedItemIndex = -1
         leastValuedItem = np.Infinity
@@ -95,58 +105,50 @@ class EFXSolver:
             if temp[k] > 0 and temp[k] < leastValuedItem:
                 leastValuedItem = temp[k]
                 leastValuedItemIndex = k
-
-        
-        #for j in range(self.n):   
-            #leastValuedItemIndex = -1
-            #leastValuedItem = np.Infinity
-            #temp = self.agentsEval[unMatchedAgent,:] * self.bundleAssigment[j,:]
-            #print("Temp for bundle :" + str(j))
-            #print(temp)
-            ##print("\n")
-            #for k in range(self.agentsEval.shape[1]): # find least valued item in bundle j;
-            #    if temp[k] > 0 and temp[k] < leastValuedItem:
-            #        leastValuedItem = temp[k]
-            #        leastValuedItemIndex = k
-            #        
-            #print("least valued item")
-            #print(leastValuedItem)
-            #efxValuation = sum(temp) - leastValuedItem
-            #if efxValuation > efxmax:
-            #    donationItemIndex = leastValuedItemIndex 
-            #    efxmax = efxValuation
-            #    bundleRemoveFromIndex = j
-            
-
-        #print(donationItemIndex)
         
         self.bundleAssigment[:,leastValuedItemIndex] = 0 # make item k part of no bundle
 
-        self.agentEvalOfBundle[:,bundleRemoveFromIndex] -= self.agentsEval[:,leastValuedItemIndex] # Remove from bundle valueations
-        print("Bundle assignment")
-        print(self.bundleAssigment)
-        print("FG")
-        print(self.feasibilityGraph)
+        self.donationList = np.append(self.donationList,leastValuedItemIndex)
+        print("donation list")
+        print(self.donationList)
+        self.agentEvalOfBundle[:,bundleToTouch] -= self.agentsEval[:,leastValuedItemIndex] # Remove from bundle valueations
+        #print("Bundle assignment")
+        #print(self.bundleAssigment)
+        #print("FG")
+        #print(self.feasibilityGraph)
         for i in range(self.n): # Update EFX valueation
             leastValuedItem = np.Infinity
-            agentValueofItemsInBundle = self.agentsEval[i,:] * self.bundleAssigment[bundleRemoveFromIndex,:]
+            agentValueofItemsInBundle = self.agentsEval[i,:] * self.bundleAssigment[bundleToTouch,:]
             for k in range(self.agentsEval.shape[1]):
                 if agentValueofItemsInBundle[k] > 0 and agentValueofItemsInBundle[k] < leastValuedItem:
                     leastValuedItem = agentValueofItemsInBundle[k]
-            self.agentsEFXValueations[i,bundleRemoveFromIndex] = sum(agentValueofItemsInBundle) - leastValuedItem
+            if leastValuedItem != np.Infinity:
+                self.agentsEFXValueations[i,bundleToTouch] = sum(agentValueofItemsInBundle) - leastValuedItem
+                # We do update of EFX max index in when updateing graph because the old index(s) are needed
+            
 
-        return bundleRemoveFromIndex
+        print("EFX max index")
+        print(self.EFXMaxIndex)
+        print("Agents EFX Valueations After donation")
+        print(self.agentsEFXValueations)
+        print("Valueation of Bundles")
+        print(self.agentEvalOfBundle)
+        print("touchedBundle")
+        print(bundleToTouch)
+        
+        return bundleToTouch
 
     def updateFeasibilityGraph(self,touchedBundle):
         
         for i in range(self.n): # All agents
 
             if self.feasibilityGraph[i,touchedBundle] != 0: # You wanted the touched bundle 
-                
+                originalBundleValuation = self.agentEvalOfBundle[i, i] 
                 if touchedBundle == self.EFXMaxIndex[i]: # The touched bundle was your efxmax bundle
-                    originalBundleValuation = self.agentEvalOfBundle[i, i]
+                    
                     self.EFXMaxIndex[i] = np.argmax(self.agentsEFXValueations[i,:])
                     #print(self.EFXMaxIndex[i])
+                    print("this is agent : " + str(i))
                     efxmax = self.agentsEFXValueations[i,int(self.EFXMaxIndex[i])]
 
                     for j in range(self.n): # Recalc all edges because you have new efxMAX
@@ -158,17 +160,20 @@ class EFXSolver:
                     if self.agentEvalOfBundle[i,i] >= efxmax: # Special Case calc for you orginal bundle
                         self.feasibilityGraph[i,i] = pow(self.n, 4) + pow(self.n, 2) if self.t[i] == 1 else pow(self.n, 2)
                     else :
-                        self.feasibilityGraph[i,j] = 0
+                        self.feasibilityGraph[i,i] = 0
+                        
 
-                else : # You wanted the bundle but it was not your efxmax. Only recalc on touchedbundle                    
+                else : # You wanted the bundle but it was not your efxmax. Only recalc on touchedbundle 
+                    efxmax = self.agentsEFXValueations[i,int(self.EFXMaxIndex[i])]                   
                     if self.agentEvalOfBundle[i,touchedBundle] >= efxmax and self.agentEvalOfBundle[i,touchedBundle] > originalBundleValuation:
                         self.feasibilityGraph[i,touchedBundle] = pow(self.n,4)
                     else :
                         self.feasibilityGraph[i,touchedBundle] = 0
         
         # Special handling of agent with touchedbundle as orginal bundle  
-        efxmax = self.EFXMaxIndex[touchedBundle]
-        originalBundleValuation = self.agentEvalOfBundle[touchedBundle,touchedBundle]         
+        efxmax = self.agentEvalOfBundle[touchedBundle,int(self.EFXMaxIndex[touchedBundle])]
+        originalBundleValuation = self.agentEvalOfBundle[touchedBundle,touchedBundle]
+        print(efxmax)       
         for j in range(self.n): # Recalc edges because of new orginal bundle eval
             if self.agentEvalOfBundle[touchedBundle,j] >= efxmax and self.agentEvalOfBundle[touchedBundle,j] > originalBundleValuation:
                 self.feasibilityGraph[touchedBundle,j] = pow(self.n,4) if self.t[j] == 1 else 1
@@ -201,6 +206,16 @@ bundles2 = np.array([[0, 0, 0, 0, 1],
                     [1, 0, 0, 0, 0], 
                     [0, 0, 0, 1, 0]])
 
+agentValueations = np.array([[1, 5, 4, 3, 7, 2],
+                                     [3, 7, 4, 4, 1, 8], 
+                                     [8, 8, 1, 3, 6, 2], 
+                                     [2, 1, 9, 2, 3, 3]])
 
-solver = EFXSolver(agentsEval2, bundles2)
+bundleAssignemnts = np.array([[0, 0, 0, 0, 1, 0],
+                                      [0, 1, 1, 0, 0, 0],
+                                      [1, 0, 0, 0, 0, 0], 
+                                      [0, 0, 0, 1, 0, 1]])
+
+
+solver = EFXSolver(agentValueations, bundleAssignemnts)
 print(solver.findEFX())
