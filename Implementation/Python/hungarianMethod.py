@@ -61,7 +61,7 @@ class Solver:
             #print(minimal)
             if minimal == self.n:
                 
-                result = self.findMatchingAlternative()
+                result = findMatching(self.fm)
                 #print("Result")
                 #print(result)
                 # check indexs in result is not 0 in orgianl 
@@ -75,7 +75,8 @@ class Solver:
                     temp = result[markedIndexs[i]]
                     if fmOrigianl[temp[0],temp[1]] == 0: # Is not an edge in orginal
                         del result[markedIndexs[i]] 
-                    
+                print("hungraian reusult")
+                print(result)
                 return result
             
             # Step 4 : Create additional 0 if needed
@@ -169,7 +170,7 @@ class Solver:
 
         #print("Now trying zero:")
         #print(row, zeroIndex)
-        
+        print(self.zeroesLocationInRow[row])
         if self.collumTakenBy[zeroIndex] != -1: 
             if len(self.zeroesLocationInRow[row]) - 1 > zeroNumber:
                 return self.searchForMatching(row, zeroNumber+1)
