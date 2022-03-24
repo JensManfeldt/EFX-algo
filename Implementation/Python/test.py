@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 
 import efxSolver
-
+import hungarianMethod
 
 
 class Test(unittest.TestCase):
@@ -86,6 +86,31 @@ class Test(unittest.TestCase):
                                                          [0, 0, 0, 1, 0],
                                                          [0, 0, 0, 0, 1]]))
         np.testing.assert_array_equal(donationList,np.array([0,1,1,0,0]))
+
+    #
+    #   Hungarian test
+    #   Remeber that the test uses the order of the matching could start to fail if it is changed
+    #   Would maybe not work with the altervativematchingMethod 
+    def test_SimpleTestHungarian(self):
+        feasibltyMatrix = [[0,15,0],
+                           [17,0,0],
+                           [0,24,88]]
+        solver = hungarianMethod.Solver(feasibltyMatrix)
+        matching = solver.solveMatchingWithHungarianMethod()
+
+        np.testing.assert_array_equal(matching,np.array([[2,2],[1,0],[0,1]]))
+
+    def test_LessSimpleTestHungarian(self):
+        feasibltyMatrix = np.array([[28, 10, 48, 23, 20],
+                                     [17, 18, 49, 20, 15],
+                                     [39, 89, 34, 69, 39],
+                                     [34, 20, 50, 38, 48],
+                                     [23, 92, 4, 93, 12]])
+
+        solver = hungarianMethod.Solver(feasibltyMatrix)
+        matching = solver.solveMatchingWithHungarianMethod()
+        
+        np.testing.assert_array_equal(matching,np.array([[4,3],[3,4],[2,1],[1,2],[0,0]]))
 
 
 if __name__ == '__main__':

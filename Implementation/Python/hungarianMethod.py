@@ -14,72 +14,44 @@ class Solver:
         self.zeroesLocationInRow = [] 
 
     def solveMatchingWithHungarianMethod(self):
-
         fmOrigianl = np.matrix.copy(self.fm)
-        print("FM as given")
-        print(fmOrigianl)
 
         # Step 0 : Convert max problem to min problem 
         # Find max value and subtract each entry from max value
         max = np.max(self.fm)
         self.fm = max - self.fm
-        
-        #print("Step 0 : \n")
-        #print(self.fm)
 
         # Step 1 : Find min in each row and subtract from each entry in that row
         for i in range(self.n):
             row = self.fm[i,:]
             row = row - np.min(row)
             
-        
         rowMins = self.fm.min(axis=1)
-        self.fm = self.fm.T - rowMins # yikes there must be a better way 
+        self.fm = self.fm.T - rowMins 
 
-        self.fm = self.fm.T #yikes
-        #print("Step 1: \n")
-        #print(self.fm)
+        self.fm = self.fm.T
 
         # Step 2 : Find min in each coloum and subtract
         
         coloumMins = self.fm.min(axis=0)
         self.fm = self.fm - coloumMins
 
-        #print("Step 2: \n")
-        #print(self.fm)
-
         #while loop     
         while True:
-             # Step 3 : a) Cover 0 with min number of lines not known yet
-            
+             # Step 3 : a) Cover 0 with min number of lines
             coveredRows, coveredColoums = self.findMiniamlCover()
-            #print("Step 3: \n")
-            #print(self.fm)
             
             minimal = sum(coveredRows) + sum(coveredColoums)
 
             # Step 3 b) if minimal = n find matching
-            #print("minimal")
-            #print(minimal)
             if minimal == self.n:
-                
                 result = findMatching(self.fm)
-                #print("Result")
-                #print(result)
+
                 # check indexs in result is not 0 in orgianl 
-                markedIndexs = []
-                for i in range(len(result)):
-                    temp = result[i]
-                    if self.fm[temp[0],temp[1]] == 0:
-                        markedIndexs.append(i)  
-                
-
-
-                for i in range(len(markedIndexs)-1, -1, -1):
-                    temp = result[markedIndexs[i]]
-                    if fmOrigianl[temp[0],temp[1]] == 0: # Is not an edge in orginal
-                        del result[markedIndexs[i]] 
-
+                for i in range(len(result)-1, -1, -1):
+                    #temp = result[markedIndexs[i]]
+                    if fmOrigianl[result[i][0],result[i][1]] == 0: # Is not an edge in orginal
+                        del result[i] 
 
                 return result
             
@@ -100,7 +72,6 @@ class Solver:
 
 
     def findMiniamlCover(self):
-        
         crossedColoums = np.zeros(self.n) # False
 
         self.markedRow = np.zeros(self.n)
@@ -117,18 +88,7 @@ class Solver:
         for i in range(self.n):
             if self.assignedRows[i] == -1 and self.markedRow[i] == 0:
                 self.markRow(i)         
-        
-        #print("\n\n\n")
-        #print(self.fm)
-        #print("Marked Coloum")
-        #print(self.markedColoum)
-        #print("marked row")
-        #print(self.markedRow)
-        #print("Assigned Row")
-        #print(self.assignedRows)
-        #print("covered coloums")
-        #print(crossedColoums)
-        #print("\n\n\n")
+
         return 1 - self.markedRow, self.markedColoum # python magic
 
     def markRow(self,rowIndex):
@@ -140,7 +100,6 @@ class Solver:
 
     def markColoum(self,coloumIndex):
         self.markedColoum[coloumIndex] = 1
-        coloum = self.fm[:,coloumIndex]
         for i in range(self.n):
             if self.assignedRows[i] == coloumIndex and not self.markedRow[i]:
                 self.markRow(i)
@@ -154,9 +113,6 @@ class Solver:
                 if self.fm[i][j] == 0:
                     zeroes.append(j)
             self.zeroesLocationInRow.append(zeroes) 
-        
-        #print("Zeroes Locations")
-        #print(self.zeroesLocationInRow)
 
         self.collumTakenBy = np.zeros(self.n) -1
 
@@ -172,8 +128,6 @@ class Solver:
     def searchForMatching(self, row, zeroNumber):
         zeroIndex = self.zeroesLocationInRow[row][zeroNumber]
 
-        #print("Now trying zero:")
-        #print(row, zeroIndex)
         print(self.zeroesLocationInRow[row])
         if self.collumTakenBy[zeroIndex] != -1: 
             if len(self.zeroesLocationInRow[row]) - 1 > zeroNumber:
@@ -237,43 +191,3 @@ def findMatchingRec(fm, coloumIndex):
                 return True, listOfIndexSolutions
         
     return False, [[-1,-1]] #Not a path with a solution 
-
-
-feasibltyMatrix = [[0,15,0],
-                    [17,0,0],
-                    [0,24,88]]
-feasibltyMatrix2 = [[15,0,0],
-                    [0,0,17],
-                    [24,0,88]]
-feasibltyMatrix3 = [[0,4,3],
-                    [4,0,3],
-                    [1,0,0]]
-
-feasibltyMatrix3 = [[0,4,3],
-                    [4,0,3],
-                    [1,0,0]]
-
-feasibltyMatrix4 = [[108,125,150],
-                    [150,135,175],
-                    [122,148,250]]
-
-feasibltyMatrix5 = [[17,0,0],
-                    [0,15,0],
-                    [103,77,0]]
-
-feasibltyMatrix6 =[[28, 10, 48, 23, 20],
-                   [17, 18, 49, 20, 15],
-                   [39, 89, 34, 69, 39],
-                   [34, 20, 50, 38, 48],
-                   [23, 92, 4, 93, 12]]
-
-
-#print(250 - np.array(feasibltyMatrix5))
-
-#solver = Solver(feasibltyMatrix6)
-
-#print(findMatching(solver.fm))
-#print(solver.solveMatchingWithHungarianMethod())
-
-#print(findMatching(solver.fm))
-
