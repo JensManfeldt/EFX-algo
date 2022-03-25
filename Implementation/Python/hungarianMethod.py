@@ -1,8 +1,10 @@
 import numpy as np
 import sys
 
+
 class Solver:
-    def __init__(self, feasibalityMatrix):
+ 
+    def setUp(self, feasibalityMatrix):
         # make the feasibalityMatrix from java to a np.array hopefully
         self.fm = np.array(feasibalityMatrix)
 
@@ -13,7 +15,12 @@ class Solver:
         self.assignedRows = -np.ones(self.n)
         self.zeroesLocationInRow = [] 
 
-    def solveMatchingWithHungarianMethod(self):
+        
+
+    def solveMatchingWithHungarianMethod(self, feasibalityMatrix):
+
+        self.setUp(feasibalityMatrix)
+
         fmOrigianl = np.matrix.copy(self.fm)
 
         # Step 0 : Convert max problem to min problem 
@@ -46,7 +53,7 @@ class Solver:
             # Step 3 b) if minimal = n find matching
             if minimal == self.n:
                 result = findMatching(self.fm)
-
+                print(result)
                 # check indexs in result is not 0 in orgianl 
                 for i in range(len(result)-1, -1, -1):
                     #temp = result[markedIndexs[i]]
@@ -128,7 +135,6 @@ class Solver:
     def searchForMatching(self, row, zeroNumber):
         zeroIndex = self.zeroesLocationInRow[row][zeroNumber]
 
-        print(self.zeroesLocationInRow[row])
         if self.collumTakenBy[zeroIndex] != -1: 
             if len(self.zeroesLocationInRow[row]) - 1 > zeroNumber:
                 return self.searchForMatching(row, zeroNumber+1)
@@ -153,11 +159,14 @@ class Solver:
 
 
 def findMatching(fm):
-    
+    print("FM")
+    print(fm)
     #find first 0 in row 0 of fm
     for i in range(fm.shape[0]):
         if fm[0,i] == 0:
             matchingPossible, listOfIndexSolutions = findMatchingRec(fm, i)
+            print("Matching possible")
+            print(matchingPossible)
             if matchingPossible:
                 for j in range(len(listOfIndexSolutions)): # Keep trac of the index(s) in the real matrix
                     listOfIndexSolutions[j][0] += 1
@@ -165,13 +174,17 @@ def findMatching(fm):
                     listOfIndexSolutions[j][1] = temp+1 if temp >= i else temp 
                 
                 listOfIndexSolutions.append([0,i])
+                print("Index solutions")
+                print(listOfIndexSolutions)
                 return listOfIndexSolutions # List of Tuples with coordinates
+    print("Returning non")
 
 
 def findMatchingRec(fm, coloumIndex):
     fm = np.delete(fm, coloumIndex, axis=1)
     fm = np.delete(fm, 0, axis=0)
-
+    #print("Find Matching rec")
+   #print("Counter : "+ str(counter))
     if fm.shape == (1,1):
         if fm[0,0] == 0:
             return True, [[0,0]] # A part of the final matching
@@ -188,6 +201,7 @@ def findMatchingRec(fm, coloumIndex):
                     listOfIndexSolutions[j][1] = temp+1 if temp >= i else temp 
                 
                 listOfIndexSolutions.append([0,i])
+
                 return True, listOfIndexSolutions
         
     return False, [[-1,-1]] #Not a path with a solution 

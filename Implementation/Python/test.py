@@ -13,8 +13,8 @@ class Test(unittest.TestCase):
         agentValueations = np.array([[3,2],
                                      [2,3]])
 
-        solver = efxSolver.EFXSolver(agentValueations,bundleAssignemnts)
-        matching, donationList = solver.findEFX()
+        solver = efxSolver.EFXSolver()
+        matching, donationList = solver.findEFX(agentValueations,bundleAssignemnts)
         np.testing.assert_array_equal(matching,np.array([[1,0],[0,1]]))
         np.testing.assert_array_equal(donationList,np.array([0,0]))
 
@@ -24,8 +24,8 @@ class Test(unittest.TestCase):
         agentValueations = np.array([[3,2],
                                      [2,3]])
 
-        solver = efxSolver.EFXSolver(agentValueations,bundleAssignemnts)
-        matching, donationList = solver.findEFX()
+        solver = efxSolver.EFXSolver()
+        matching, donationList = solver.findEFX(agentValueations,bundleAssignemnts)
         np.testing.assert_array_equal(matching,np.array([[0,1],
                                                          [1,0]]))
         np.testing.assert_array_equal(donationList,np.array([0,0]))
@@ -41,8 +41,8 @@ class Test(unittest.TestCase):
                                       [1, 0, 0, 0, 0], 
                                       [0, 0, 0, 1, 0]])
 
-        solver = efxSolver.EFXSolver(agentValueations,bundleAssignemnts)
-        matching, donationList = solver.findEFX()
+        solver = efxSolver.EFXSolver()
+        matching, donationList = solver.findEFX(agentValueations,bundleAssignemnts)
         
         np.testing.assert_array_equal(matching,np.array([[0,0,0,0,1],
                                                          [0,0,1,0,0],
@@ -61,8 +61,8 @@ class Test(unittest.TestCase):
                                       [1, 0, 0, 0, 0, 0], 
                                       [0, 0, 0, 1, 0, 1]])
 
-        solver = efxSolver.EFXSolver(agentValueations,bundleAssignemnts)
-        matching, donationList = solver.findEFX()
+        solver = efxSolver.EFXSolver()
+        matching, donationList = solver.findEFX(agentValueations,bundleAssignemnts)
         
         np.testing.assert_array_equal(matching,np.array([[0,0,0,0,1,0],
                                                          [0,0,0,1,0,1],
@@ -79,14 +79,30 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 1, 0],
                                       [0, 0, 0, 0, 1]])
 
-        solver = efxSolver.EFXSolver(agentValueations,bundleAssignemnts)
-        matching, donationList = solver.findEFX()
+        solver = efxSolver.EFXSolver()
+        matching, donationList = solver.findEFX(agentValueations,bundleAssignemnts)
 
         np.testing.assert_array_equal(matching,np.array([[1, 0, 0, 0, 0],
                                                          [0, 0, 0, 1, 0],
                                                          [0, 0, 0, 0, 1]]))
         np.testing.assert_array_equal(donationList,np.array([0,1,1,0,0]))
 
+    def test_OneAgentHasAllItems(self):
+        agentValueations = np.array([[3, 2, 1, 1, 1],
+                                     [3, 2, 1, 1, 1], 
+                                     [3, 2, 1, 1, 1]])
+
+        bundleAssignemnts = np.array([[1, 1, 1, 1, 1],
+                                      [0, 0, 0, 0, 0],
+                                      [0, 0, 0, 0, 0]])
+
+        solver = efxSolver.EFXSolver()
+        matching, donationList = solver.findEFX(agentValueations,bundleAssignemnts)
+
+        np.testing.assert_array_equal(matching,np.array([[1, 0, 0, 0, 0],
+                                                         [0, 0, 0, 0, 0],
+                                                         [0, 0, 0, 0, 0]]))
+        np.testing.assert_array_equal(donationList,np.array([0,1,1,1,1]))
     #
     #   Hungarian test
     #   Remeber that the test uses the order of the matching could start to fail if it is changed
@@ -95,8 +111,8 @@ class Test(unittest.TestCase):
         feasibltyMatrix = [[0,15,0],
                            [17,0,0],
                            [0,24,88]]
-        solver = hungarianMethod.Solver(feasibltyMatrix)
-        matching = solver.solveMatchingWithHungarianMethod()
+        solver = hungarianMethod.Solver()
+        matching = solver.solveMatchingWithHungarianMethod(feasibltyMatrix)
 
         np.testing.assert_array_equal(matching,np.array([[2,2],[1,0],[0,1]]))
 
@@ -107,8 +123,8 @@ class Test(unittest.TestCase):
                                      [34, 20, 50, 38, 48],
                                      [23, 92, 4, 93, 12]])
 
-        solver = hungarianMethod.Solver(feasibltyMatrix)
-        matching = solver.solveMatchingWithHungarianMethod()
+        solver = hungarianMethod.Solver()
+        matching = solver.solveMatchingWithHungarianMethod(feasibltyMatrix)
         
         np.testing.assert_array_equal(matching,np.array([[4,3],[3,4],[2,1],[1,2],[0,0]]))
 
