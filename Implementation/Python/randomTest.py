@@ -86,11 +86,12 @@ def calcNashWellFare(agentsEvaluations, bundleAssignment):
 
 if __name__ == '__main__':
     np.random.seed(59)
-    numAgents = 25
-    numItems = 100
-    for i in range(1000):
+    numAgents = 100
+    numItems = 500
+    for i in range(100):
         valueationMatrix = generateValueations(numAgents,numItems)
-        bundleAssignment = generateBundleAssignmentWithDraft(valueationMatrix)
+        bundleAssignment = generateBundleAssignment(numAgents,numItems)
+        #bundleAssignment = generateBundleAssignmentWithDraft(valueationMatrix)
         nashBefore = calcNashWellFare(valueationMatrix,bundleAssignment)
 
         solver = efxSolver.EFXSolver()
@@ -112,6 +113,7 @@ if __name__ == '__main__':
             break
         elif nashAfter < 1/2*nashBefore:
             print("Nash below garintee")
+            print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
         else : 
             #print("Example number : " + str(i) + " done")
             #print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))

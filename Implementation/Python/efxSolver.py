@@ -26,19 +26,10 @@ class EFXSolver:
 
         while True:
 
-            #print("New Iteration")
             #matchingSolver = hungarianMethod.Solver()
             #matching = np.array(matchingSolver.solveMatchingWithHungarianMethod(np.matrix.copy(self.feasibilityGraph)))
             copy = np.matrix.copy(self.feasibilityGraph)
-            
-            #print("FG")
-            #print(self.feasibilityGraph)
-            #print("Agent vale")
-            #print(self.agentEvalOfBundle)
-            #print("Agent EFX")
-            #print(self.agentsEFXValueations)
-            #print("Bundle Assignment")
-            #print(self.bundleAssigment)
+
             max = np.max(copy)
             copy = max - copy
             row, col = scipy.optimize.linear_sum_assignment(copy)
@@ -48,43 +39,27 @@ class EFXSolver:
                 matching.append([row[i],col[i]])           
             
             for i in range(len(matching)-1, -1, -1):
-                #temp = result[markedIndexs[i]]
-                index0 = matching[i][0]
-                if self.feasibilityGraph[index0,matching[i][1]] == 0: # Is not an edge in orginal
+
+                if self.feasibilityGraph[matching[i][0],matching[i][1]] == 0: # Is not an edge in orginal
                     del matching[i]
-                    #matching = np.delete(matching,i)
 
             if len(matching) == self.n:
                 returnMatrix = np.zeros([self.n,self.m]) # Same format as the input 
                 for i in range(self.n): # move around rows to match the agent they are assigned to 
                     returnMatrix[matching[i][0],:] = self.bundleAssigment[matching[i][1],:] 
 
-                #print("Matching")
-                #print(matching)
-                #
-                #print("EFX")
-                #print(self.agentsEFXValueations)
-                #print("Valueactions")
-                #print(self.agentEvalOfBundle)
-                ##print("Items in bundle")
-                ##print(self.bundleAssigment)
-                #print("FG")
-                #print(self.feasibilityGraph)
-                #print("Touched")
-                #print(self.t)
                 return returnMatrix,self.donationList
             
             matching = np.array(matching)
             # Find unmatched agent
-            #print(matching)
+
             unmatchedAgent = -1
             agentsMatched = matching[:,0]
             for i in range(self.n):
                if not (i in agentsMatched):
                    unmatchedAgent = i
                    break
-            #print("Unmatched Agent")
-            #print(unmatchedAgent)
+
             bundleToTouch, leastValueItemIndex = self.findRobustDemand(unmatchedAgent)
 
             affectedAgents = []
@@ -104,15 +79,7 @@ class EFXSolver:
 
 
             self.updateFeasibilityGraph(bundleToTouch, affectedAgents, unmatchedAgent)
-
-            
-            #print("TouchedBundle")
-            #print(bundleToTouch)
-            #print("What bundles are touched")
-            #print(self.t)
-
-            
-            
+                        
 
     def buildFeasibilityGraph(self): 
         
@@ -151,12 +118,13 @@ class EFXSolver:
 
 
     def findRobustDemand(self,unMatchedAgent):
-
+        
         #bundleToTouch = int(self.EFXMaxIndex[unMatchedAgent])
         bundleToTouch = int(np.argmax(self.agentsEFXValueations[unMatchedAgent,:]))
 
-  
+        
         temp = self.agentsEval[unMatchedAgent,:] * self.bundleAssigment[bundleToTouch,:]
+        # np.argmin(np.nonzero(temp)) or argwhere
 
         leastValuedItemIndex = -1
         leastValuedItem = np.Infinity
