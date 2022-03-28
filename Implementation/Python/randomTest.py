@@ -1,3 +1,4 @@
+from operator import mod
 import unittest
 import numpy as np
 import efxSolver
@@ -38,7 +39,6 @@ def generateBundleAssignmentWithDraft(agentsValueations):
         agentToPick = j % agentsValueations.shape[0]
 
         bestItem = int(np.argmax(copy[agentToPick,:]))
-
         bundleAssignement[agentToPick,bestItem] = 1
 
         copy[:,bestItem] = 0
@@ -71,13 +71,12 @@ def isAllocEFX(alloc,agentsValueations):
 def calcNashWellFare(agentsEvaluations, bundleAssignment):
     welFare = 1
     n = agentsEvaluations.shape[0]
-    #print("Agents Eval")
-    #print(agentsEvaluations)
-    #print("Bundle Assign")
-    #print(bundleAssignment)
+
     for i in range(n):
+        #print(bundleAssignment.shape)
         agentValueation = sum(agentsEvaluations[i,:] * bundleAssignment[i,:])
         #print("Agent : " + str(i) + " valueation is : " + str(agentValueation))
+        
         agentValueation = pow(agentValueation,1/n)
         
         welFare *= agentValueation
@@ -87,27 +86,34 @@ def calcNashWellFare(agentsEvaluations, bundleAssignment):
 
 if __name__ == '__main__':
     np.random.seed(59)
-    numAgents = 10
+    numAgents = 25
     numItems = 100
     for i in range(1000):
         valueationMatrix = generateValueations(numAgents,numItems)
-        bundleAssignment = generateBundleAssignment(numAgents,numItems)
+        bundleAssignment = generateBundleAssignmentWithDraft(valueationMatrix)
         nashBefore = calcNashWellFare(valueationMatrix,bundleAssignment)
+
         solver = efxSolver.EFXSolver()
-        allocation, donationsList = solver.findEFX(valueationMatrix,bundleAssignment)
+        allocation, donationsList = solver.findEFX(valueationMatrix,np.matrix.copy(bundleAssignment))
+
         nashAfter = calcNashWellFare(valueationMatrix,allocation)
 
-        if not isAllocEFX(allocation,valueationMatrix) or  nashAfter < 1/2*nashBefore:
-            print("Value Matrix")
-            print(valueationMatrix)
-            print("BundleAssignment")
-            print(bundleAssignment)
+        if not isAllocEFX(allocation,valueationMatrix):
+            print("Not efx")
+            #print("Value Matrix")
+            #print(valueationMatrix)
+            #print("BundleAssignment")
+            #print(bundleAssignment)
             print("Allocation")
             print(allocation)
-            print("donationsList")
-            print(donationsList)
+            #print("donationsList")
+            #print(donationsList)
+            #print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
+            break
+        elif nashAfter < 1/2*nashBefore:
+            print("Nash below garintee")
         else : 
-            print("Example number : " + str(i) + " done")
-            print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
-        
+            #print("Example number : " + str(i) + " done")
+            #print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
+            pass
     #unittest.main()
