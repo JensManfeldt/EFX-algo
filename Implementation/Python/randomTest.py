@@ -14,7 +14,7 @@ class randomTester(unittest.TestCase):
         valueationMatrix = generateValueations(numAgents,numItems)
         bundleAssignment = generateBundleAssignment(numAgents, numItems)
         
-        allocation, donationsList = solver.findEFX(valueationMatrix,bundleAssignment)
+        allocation, donationsList = solver.findEFXBasic(valueationMatrix,bundleAssignment)
         print("Allocation")
         print(allocation)
         print("donationsList")
@@ -95,7 +95,7 @@ if __name__ == '__main__':
         nashBefore = calcNashWellFare(valueationMatrix,bundleAssignment)
 
         solver = efxSolver.EFXSolver()
-        allocation, donationsList = solver.findEFX(valueationMatrix,np.matrix.copy(bundleAssignment))
+        allocation, donationsList = solver.findEFXAdvanced(valueationMatrix,np.matrix.copy(bundleAssignment),0)
 
         nashAfter = calcNashWellFare(valueationMatrix,allocation)
 
@@ -110,12 +110,11 @@ if __name__ == '__main__':
             #print("donationsList")
             #print(donationsList)
             #print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
-            break
         elif nashAfter < 1/2*nashBefore:
             print("Nash below garintee")
             print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
         else : 
-            #print("Example number : " + str(i) + " done")
+            print("Example number : " + str(i) + " done")
             #print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
             pass
     #unittest.main()

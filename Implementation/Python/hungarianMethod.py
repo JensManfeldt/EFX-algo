@@ -53,7 +53,7 @@ class Solver:
             # Step 3 b) if minimal = n find matching
             if minimal == self.n:
                 result = findMatching(self.fm)
-                print(result)
+                #print(result)
                 # check indexs in result is not 0 in orgianl 
                 for i in range(len(result)-1, -1, -1):
                     #temp = result[markedIndexs[i]]
@@ -159,14 +159,13 @@ class Solver:
 
 
 def findMatching(fm):
-    print("FM")
-    print(fm)
+
     #find first 0 in row 0 of fm
     for i in range(fm.shape[0]):
         if fm[0,i] == 0:
             matchingPossible, listOfIndexSolutions = findMatchingRec(fm, i)
-            print("Matching possible")
-            print(matchingPossible)
+            #print("Matching possible")
+            #print(matchingPossible)
             if matchingPossible:
                 for j in range(len(listOfIndexSolutions)): # Keep trac of the index(s) in the real matrix
                     listOfIndexSolutions[j][0] += 1
@@ -174,10 +173,10 @@ def findMatching(fm):
                     listOfIndexSolutions[j][1] = temp+1 if temp >= i else temp 
                 
                 listOfIndexSolutions.append([0,i])
-                print("Index solutions")
-                print(listOfIndexSolutions)
+                #print("Index solutions")
+                #print(listOfIndexSolutions)
                 return listOfIndexSolutions # List of Tuples with coordinates
-    print("Returning non")
+    #print("Returning non")
 
 
 def findMatchingRec(fm, coloumIndex):
