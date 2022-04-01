@@ -108,14 +108,14 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 1, 0]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList = solver.findEFX(agentValueations,bundleAssignemnts)
+        matching, donationList, counter = solver.findEFX(agentValueations,bundleAssignemnts)
         
         np.testing.assert_array_equal(matching,np.array([[0,0,0,0,1],
                                                          [0,1,0,0,0],
                                                          [1,0,0,0,0],
                                                          [0,0,1,1,0]]))
         np.testing.assert_array_equal(donationList,np.array([0,0,0,0,0]))
-
+        self.assertEqual(counter,1)
         
 
     def test_AssignmentWithAnAgentNotGettingOrginalBundleBasic(self):
@@ -172,13 +172,14 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 1, 0, 1]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList = solver.findEFX(agentValueations,bundleAssignemnts)
+        matching, donationList, counter = solver.findEFX(agentValueations,bundleAssignemnts)
         
         np.testing.assert_array_equal(matching,np.array([[0,0,0,0,1,0],
                                                          [0,1,0,1,0,0],
                                                          [1,0,0,0,0,0],
                                                          [0,0,1,0,0,0]]))
         np.testing.assert_array_equal(donationList,np.array([0,0,0,0,0,1]))
+        self.assertEqual(counter,2)
 
     def test_CaseWithTwoDonationsBasic(self):
         agentValueations = np.array([[3, 2, 1, 1, 1],
@@ -260,12 +261,13 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 0, 0]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList = solver.findEFX(agentValueations,bundleAssignemnts)
+        matching, donationList, counter = solver.findEFX(agentValueations,bundleAssignemnts)
 
         np.testing.assert_array_equal(matching,np.array([[0, 0, 1, 1, 1],
                                                          [1, 0, 0, 0, 0],
                                                          [0, 1, 0, 0, 0]]))
         np.testing.assert_array_equal(donationList,np.array([0,0,0,0,0]))
+        self.assertEqual(counter,2)
 
     
     def test_updateXPathLen0(self):

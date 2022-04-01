@@ -66,12 +66,12 @@ class EFXSolver:
 
             self.updateValueationsAndUpdateFeasibilityGraph(leastValueItemIndex,bundleToTouch)
 
-    def findEFX(self, agentsEval, bundleAssigment, delta=0):     
+    def findEFX(self, agentsEval, bundleAssigment, delta=0, counter=0):     
         allocation, donationlist, isEFX = self.algo2(agentsEval, bundleAssigment, delta)
         if(isEFX):
-            return allocation, donationlist
+            return allocation, donationlist, counter
         else: 
-            return self.findEFX(agentsEval, allocation, delta)
+            return self.findEFX(agentsEval, allocation, delta, counter + 1)
 
     def algo2(self, agentsEval, bundleAssigment, delta):
         self.setUp(agentsEval, bundleAssigment)
@@ -139,12 +139,10 @@ class EFXSolver:
 
                     currentValueationOfBundle = self.agentEvalOfBundle[robustDemandBundle, robustDemandBundle]
                     orginalValueationOfBundle = sum(self.agentsEval[robustDemandBundle,:] * self.bundleAssignmentX[robustDemandBundle,:])
-                    #print("Printer Preben was here")
+                    
 
                     if (2 + delta) * currentValueationOfBundle < orginalValueationOfBundle:
-                        
                         self.updateOrginalAlloc(path, robustDemandBundle, unmatchedAgent)
-                        print("Returning new Assignemnt")
                         return self.bundleAssignmentX, np.zeros(self.m), False
 
                     

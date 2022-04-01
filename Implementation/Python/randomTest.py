@@ -23,7 +23,7 @@ class randomTester(unittest.TestCase):
 
 
 def generateValueations(numAgents, numItems):
-    valueMatrix = np.random.randint(1,100,[numAgents,numItems])
+    valueMatrix = np.random.randint(1,10000,[numAgents,numItems])
     return valueMatrix
 
 def generateBundleAssignment(numAgents,numItems):
@@ -44,11 +44,7 @@ def generateBundleAssignmentWithDraft(agentsValueations):
         copy[:,bestItem] = 0
 
     return bundleAssignement
-
-
-
-    
-        
+      
 
 def isAllocEFX(alloc,agentsValueations):
     for i in range(agentsValueations.shape[0]):
@@ -87,15 +83,17 @@ def calcNashWellFare(agentsEvaluations, bundleAssignment):
 if __name__ == '__main__':
     np.random.seed(59)
     numAgents = 100
-    numItems = 500
-    for i in range(100):
+    numItems = 201
+    for i in range(100000):
         valueationMatrix = generateValueations(numAgents,numItems)
-        bundleAssignment = generateBundleAssignment(numAgents,numItems)
-        #bundleAssignment = generateBundleAssignmentWithDraft(valueationMatrix)
+        #bundleAssignment = generateBundleAssignment(numAgents,numItems)
+        bundleAssignment = generateBundleAssignmentWithDraft(valueationMatrix)
         nashBefore = calcNashWellFare(valueationMatrix,bundleAssignment)
 
         solver = efxSolver.EFXSolver()
-        allocation, donationsList = solver.algo2(valueationMatrix,np.matrix.copy(bundleAssignment),0)
+        allocation, donationsList, counter = solver.findEFX(valueationMatrix,np.matrix.copy(bundleAssignment))
+
+        print(isAllocEFX(np.matrix.copy(bundleAssignment),valueationMatrix))
 
         nashAfter = calcNashWellFare(valueationMatrix,allocation)
 
@@ -105,16 +103,23 @@ if __name__ == '__main__':
             #print(valueationMatrix)
             #print("BundleAssignment")
             #print(bundleAssignment)
-            print("Allocation")
-            print(allocation)
+            #print("Allocation")
+            #print(allocation)
             #print("donationsList")
             #print(donationsList)
             #print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
         elif nashAfter < 1/2*nashBefore:
-            print("Nash below garintee")
+            print("Nash below guarantee")
             print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
         else : 
-            print("Example number : " + str(i) + " done")
+            print("Example number : " + str(i) + " done. After " + str(counter) + " recursive calls. Donated " + str(sum(donationsList)) + " items ")
+            if(counter > 0):
+                print("Value Matrix")
+                print(valueationMatrix)
+                print("BundleAssignment")
+                print(bundleAssignment)
+                print("Allocation")
+                print(allocation)
+                break
             #print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
-            pass
     #unittest.main()
