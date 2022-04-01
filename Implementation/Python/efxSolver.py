@@ -1,4 +1,3 @@
-from more_itertools import first
 import numpy as np
 import hungarianMethod
 import scipy.optimize
@@ -19,7 +18,7 @@ class EFXSolver:
         self.donationList = np.zeros(self.m,dtype=int)
 
 
-    def findEFXBasic(self, agentsEval, bundleAssigment):
+    def algo1(self, agentsEval, bundleAssigment):
 
         self.setUp(agentsEval, bundleAssigment)
 
@@ -67,9 +66,14 @@ class EFXSolver:
 
             self.updateValueationsAndUpdateFeasibilityGraph(leastValueItemIndex,bundleToTouch)
 
-                        
+    def findEFX(self, agentsEval, bundleAssigment, delta=0):     
+        allocation, donationlist, isEFX = self.algo2(agentsEval, bundleAssigment, delta)
+        if(isEFX):
+            return allocation, donationlist
+        else: 
+            return self.findEFX(agentsEval, allocation, delta)
 
-    def findEFXAdvanced(self, agentsEval, bundleAssigment, delta):
+    def algo2(self, agentsEval, bundleAssigment, delta):
         self.setUp(agentsEval, bundleAssigment)
 
         self.feasibilityGraph = self.buildFeasibilityGraph()
@@ -94,7 +98,7 @@ class EFXSolver:
                     del matching[i]
 
             if len(matching) == self.n:
-                return self.createReturnMatrix(matching),self.donationList
+                return self.createReturnMatrix(matching),self.donationList, True
             
             matching = np.array(matching)
             # Find unmatched agent
@@ -141,7 +145,7 @@ class EFXSolver:
                         
                         self.updateOrginalAlloc(path, robustDemandBundle, unmatchedAgent)
                         print("Returning new Assignemnt")
-                        return self.bundleAssignmentX, np.zeros(self.m)
+                        return self.bundleAssignmentX, np.zeros(self.m), False
 
                     
 
@@ -362,4 +366,4 @@ bundleAssignemnts = np.array([[0, 0, 0, 0, 1, 0],
 np.set_printoptions(suppress=True)
 
 solver = EFXSolver()
-solver.findEFXAdvanced(agentValueations,bundleAssignemnts,0)
+solver.algo2(agentValueations,bundleAssignemnts,0)

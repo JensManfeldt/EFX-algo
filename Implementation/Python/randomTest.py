@@ -14,7 +14,7 @@ class randomTester(unittest.TestCase):
         valueationMatrix = generateValueations(numAgents,numItems)
         bundleAssignment = generateBundleAssignment(numAgents, numItems)
         
-        allocation, donationsList = solver.findEFXBasic(valueationMatrix,bundleAssignment)
+        allocation, donationsList = solver.algo1(valueationMatrix,bundleAssignment)
         print("Allocation")
         print(allocation)
         print("donationsList")
@@ -95,7 +95,7 @@ if __name__ == '__main__':
         nashBefore = calcNashWellFare(valueationMatrix,bundleAssignment)
 
         solver = efxSolver.EFXSolver()
-        allocation, donationsList = solver.findEFXAdvanced(valueationMatrix,np.matrix.copy(bundleAssignment),0)
+        allocation, donationsList = solver.algo2(valueationMatrix,np.matrix.copy(bundleAssignment),0)
 
         nashAfter = calcNashWellFare(valueationMatrix,allocation)
 
