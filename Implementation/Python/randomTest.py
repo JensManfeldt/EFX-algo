@@ -2,6 +2,7 @@ from operator import mod
 import unittest
 import numpy as np
 import efxSolver
+import pandas as pd
 
 class randomTester(unittest.TestCase):
 
@@ -23,7 +24,7 @@ class randomTester(unittest.TestCase):
 
 
 def generateValueations(numAgents, numItems):
-    valueMatrix = np.random.randint(1,10000,[numAgents,numItems])
+    valueMatrix = np.random.randint(1,10,[numAgents,numItems])
     return valueMatrix
 
 def generateBundleAssignment(numAgents,numItems):
@@ -79,21 +80,32 @@ def calcNashWellFare(agentsEvaluations, bundleAssignment):
 
     return welFare
 
+def saveProblemAs(name,valueationMatrix,bundleAssignment):
+    dataframe = pd.DataFrame(valueationMatrix)
+    dataframe.to_csv(name + ".csv")
+    
+    #with open('valueationMatrix.txt', 'w') as file:
+    #    for i in range(valueationMatrix.shape[0]):
+    #        for j in range(valueationMatrix.shape[1]):
+    #            padding = 3 - len(str(valueationMatrix[i,j]))
+    #            print(padding)
+    #            file.write(str(valueationMatrix[i,j]) + "|")
+    #        file.write("\n")
 
 if __name__ == '__main__':
-    np.random.seed(59)
-    numAgents = 100
-    numItems = 201
+    np.random.seed(2354)
+    numAgents = 20
+    numItems = 50
     for i in range(100000):
         valueationMatrix = generateValueations(numAgents,numItems)
         #bundleAssignment = generateBundleAssignment(numAgents,numItems)
         bundleAssignment = generateBundleAssignmentWithDraft(valueationMatrix)
         nashBefore = calcNashWellFare(valueationMatrix,bundleAssignment)
-
+        #saveProblemAs("values",valueationMatrix,bundleAssignment)
         solver = efxSolver.EFXSolver()
-        allocation, donationsList, counter = solver.findEFX(valueationMatrix,np.matrix.copy(bundleAssignment))
+        allocation, donationsList, counter = solver.findEFX(valueationMatrix,np.matrix.copy(bundleAssignment), 0)
 
-        print(isAllocEFX(np.matrix.copy(bundleAssignment),valueationMatrix))
+        #print(isAllocEFX(np.matrix.copy(bundleAssignment),valueationMatrix))
 
         nashAfter = calcNashWellFare(valueationMatrix,allocation)
 
@@ -111,6 +123,15 @@ if __name__ == '__main__':
         elif nashAfter < 1/2*nashBefore:
             print("Nash below guarantee")
             print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
+        #elif sum(donationsList) == 3:
+        #    print("Value Matrix")
+        #    print(valueationMatrix)
+        #    print("BundleAssignment")
+        #    print(bundleAssignment)
+        #    print("Allocation")
+        #    print(allocation)
+        #    print("donationsList")
+        #    print(donationsList)
         else : 
             print("Example number : " + str(i) + " done. After " + str(counter) + " recursive calls. Donated " + str(sum(donationsList)) + " items ")
             if(counter > 0):
@@ -121,5 +142,5 @@ if __name__ == '__main__':
                 print("Allocation")
                 print(allocation)
                 break
-            #print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
+                #print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
     #unittest.main()
