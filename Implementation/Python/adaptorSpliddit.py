@@ -21,11 +21,6 @@ def create_valueation_matrix(datafile):
     for i in range(len(value)):
         x = int(i / uniqueResource)
         y = i % uniqueResource
-        if int(value[i]) == 0:
-            valueationMatrix[x,y] = 1
-        else: 
-            valueationMatrix[x,y] = value[i]
+        valueationMatrix[x,y] = value[i]
 
     return valueationMatrix
-
-create_valueation_matrix("/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/realData18")

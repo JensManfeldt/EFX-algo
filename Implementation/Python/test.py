@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+import util as u
 
 import efxSolver
 import hungarianMethod

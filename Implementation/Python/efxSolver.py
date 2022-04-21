@@ -8,7 +8,7 @@ class EFXSolver:
         self.agentsEval = agentsEval
         self.n = agentsEval.shape[0] # number of agents
         self.m = bundleAssigment.shape[1] # number of items
-        self.bundleAssigmentZ = bundleAssigment
+        self.bundleAssigmentZ = np.matrix.copy(bundleAssigment)
         self.bundleAssignmentX = np.matrix.copy(bundleAssigment)
         self.agentEvalOfBundle = agentsEval @ bundleAssigment.T
         self.agentsEFXValueations = np.zeros([self.n,self.n])
@@ -258,7 +258,8 @@ class EFXSolver:
         leastValuedItemIndex = -1
         leastValuedItem = np.Infinity
         for k in range(self.agentsEval.shape[1]): # find least valued item in bundle j;
-            if temp[k] > 0 and temp[k] < leastValuedItem:
+            #if temp[k] > 0 and temp[k] < leastValuedItem:
+            if self.bundleAssigmentZ[bundleToTouch,k] > 0 and self.agentsEval[unMatchedAgent,k] < leastValuedItem:
                 leastValuedItem = temp[k]
                 leastValuedItemIndex = k 
         
@@ -324,44 +325,3 @@ class EFXSolver:
             self.feasibilityGraph[touchedBundle,touchedBundle] = 0
         
         
-        
-        
-
-
-valueMatrix = np.array([[24, 79, 62, 87, 23, 89, 79, 70, 98, 32, 77, 30, 43, 83, 57, 55,  3, 27, 93, 29],
-                        [ 5, 96, 21, 71, 20, 62, 75, 60, 98, 96, 56, 85, 42, 29, 71, 16, 46, 71, 86, 95],
-                        [30, 17, 75, 25, 94, 61, 85, 65, 54, 83, 27, 82, 46, 81, 74, 17,  3, 20, 56, 76],
-                        [64, 33, 63, 59, 38, 69, 57, 31, 72,  6, 11, 29, 11, 85,  3, 54,  4, 89, 78, 94],
- [47, 18, 38, 82, 59, 53, 56, 80, 54, 22, 13, 66, 39, 69, 78, 65, 36, 94, 75, 15],
- [70, 78, 77, 39, 59, 69, 58, 51, 71, 32, 15, 71, 70, 77, 46, 10, 73, 83, 61, 37],
- [18, 11, 43, 60, 27, 48, 86, 98, 76, 96, 53, 68, 78, 77, 74, 52, 82,  7, 63, 30],
- [79, 49, 39, 99, 75, 53, 94, 69, 13, 25, 21, 32, 27, 73, 96, 60,  3, 26, 61, 48],
- [20, 57, 57, 44, 55, 72, 30, 47, 32, 53, 18, 19, 40, 82,  9,  5, 30, 98, 18, 60],
- [77, 96,  8,  2, 78, 47, 86, 59, 47, 33, 71, 80, 28, 42, 12, 12, 78, 99, 71, 34]])
- 
-bundleAssignment = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-                             [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                             [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-                             [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0],
-                             [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-                             [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-                             [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-                             [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]])
-
-agentValueations = np.array([[1, 5, 4, 3, 7, 2],
-                                     [3, 7, 4, 4, 1, 8], 
-                                     [8, 8, 1, 3, 6, 2], 
-                                     [2, 1, 9, 2, 3, 3]])
-
-bundleAssignemnts = np.array([[0, 0, 0, 0, 1, 0],
-                                      [0, 1, 1, 0, 0, 0],
-                                      [1, 0, 0, 0, 0, 0], 
-                                      [0, 0, 0, 1, 0, 1]])
-
-
-np.set_printoptions(suppress=True)
-
-solver = EFXSolver()
-solver.algo2(agentValueations,bundleAssignemnts,0)
