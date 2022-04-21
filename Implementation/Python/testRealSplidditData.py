@@ -7,12 +7,12 @@ realdataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/"
 
 demoDataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/DempoData/"
 
-dataPath = realdataPath
+dataPath = demoDataPath
 
 for file in os.listdir(dataPath):
     valueationMatrix = adaptorSpliddit.create_valueation_matrix(dataPath + str(file))
 
-    bundleAssignment = u.generateBundleAssignmentWithDraft(valueationMatrix)
+    bundleAssignment = u.generateBundleAssignmentWithDraftAndVariance(valueationMatrix)
 
     solver = efxSolver.EFXSolver()
 

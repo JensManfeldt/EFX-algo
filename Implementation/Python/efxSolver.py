@@ -1,6 +1,7 @@
 import numpy as np
 import hungarianMethod
 import scipy.optimize
+import util as u
 
 class EFXSolver: 
         
@@ -324,4 +325,20 @@ class EFXSolver:
         else :
             self.feasibilityGraph[touchedBundle,touchedBundle] = 0
         
-        
+
+values = np.array([[584, 422, 538, 594, 205, 288, 625, 487, 770],
+                   [622, 478, 681, 909, 221, 874, 452, 527, 138],
+                   [774, 137, 927, 147, 317, 313, 508,  15,  91],
+                   [271, 182, 204, 326, 319, 354,  89, 435, 860]])
+
+bundleAssignment = np.array([[0, 1, 0, 0, 0, 0, 1, 0, 1],
+                             [0, 0, 0, 1, 0, 1, 0, 0, 0],
+                             [1, 0, 1, 0, 0, 0, 0, 0, 0],
+                             [0, 0, 0, 0, 1, 0, 0, 1, 0]])
+
+
+#bundleAssignment = u.generateBundleAssignmentWithDraftAndVariance(values)
+
+print(bundleAssignment)
+solver = EFXSolver()
+print(solver.findEFX(values, bundleAssignment))
