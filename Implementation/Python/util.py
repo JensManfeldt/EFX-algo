@@ -78,20 +78,43 @@ def generateBundleAssignmentWithDraftAndVariance(agentsValueations):
 def saveProblem(filename, agentsValueations,bundleAssignment):
     with open("/home/jens/Skrivebord/F2022/bachelor/EFX-algo/InterestingExamples/" + str(filename), "w+") as file: 
         file.write("Values\n")
-        file.write(agentsValueations)
+        file.write(str(agentsValueations))
         file.write("\n")
         file.write("Assignment\n")
-        file.write(bundleAssignment)
+        file.write(str(bundleAssignment))
+
+def generateRecursiveValues(numAgents, numItems):
+    values = generateValueations(numAgents, numItems)
+    bundleAssignment = generateBundleAssignmentWithDraft(values)
+
+    temp = values[0,:] * bundleAssignment[0,:]
+    mostValuedItem = int(np.argmax(temp))
+    totalValue = sum(temp)
+
+    values[0,mostValuedItem] = (totalValue-values[0,mostValuedItem]) - 1
+
+    temp2 = values[1,:] * bundleAssignment[1,:]
+
+    values[1,mostValuedItem] = sum(temp2) + 1
+
+    return values
+
+def checkConditions(agentsValueations, bundleAssignment):
+
+    for i in range(agentsValueations.shape[0]):
+        bundle = agentsValueations[i,:] * bundleAssignment[i,:]
+        bundleValue = sum(bundle)
+        for k in range(agentsValueations.shape[1]):
+            if agentsValueations[i,k] > bundleValue:
+                for j in range(agentsValueations.shape[0]):
+                    if bundleAssignment[j,k] == 1:
+                        otherAgentBundleValue = sum(agentsValueations[j,:] * bundleAssignment[j,:])
+                        if 2*agentsValueations[j,k] < otherAgentBundleValue:
+                            return True
+
+    return False
 
 
-values = np.array([[584, 422, 538, 594, 205, 288, 625, 487, 770],
-                   [622, 478, 681, 909, 221, 874, 452, 527, 138],
-                   [774, 137, 927, 147, 317, 313, 508,  15,  91],
-                   [271, 182, 204, 326, 319, 354,  89, 435, 860]])
 
-bundleAssignment = np.array([[0, 1, 0, 0, 0, 0, 1, 0, 1],
-                             [0, 0, 0, 1, 0, 1, 0, 0, 0],
-                             [1, 0, 1, 0, 0, 0, 0, 0, 0],
-                             [0, 0, 0, 0, 1, 0, 0, 1, 0]])
 
-saveProblem("test.txt", str(values), str(bundleAssignment))
+

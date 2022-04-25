@@ -324,21 +324,28 @@ class EFXSolver:
             self.feasibilityGraph[touchedBundle,touchedBundle] = pow(self.n, 4) + pow(self.n, 2)
         else :
             self.feasibilityGraph[touchedBundle,touchedBundle] = 0
-        
-
-values = np.array([[584, 422, 538, 594, 205, 288, 625, 487, 770],
-                   [622, 478, 681, 909, 221, 874, 452, 527, 138],
-                   [774, 137, 927, 147, 317, 313, 508,  15,  91],
-                   [271, 182, 204, 326, 319, 354,  89, 435, 860]])
-
-bundleAssignment = np.array([[0, 1, 0, 0, 0, 0, 1, 0, 1],
-                             [0, 0, 0, 1, 0, 1, 0, 0, 0],
-                             [1, 0, 1, 0, 0, 0, 0, 0, 0],
-                             [0, 0, 0, 0, 1, 0, 0, 1, 0]])
 
 
-#bundleAssignment = u.generateBundleAssignmentWithDraftAndVariance(values)
+values = np.array([[965, 534, 787, 983, 797, 890, 492, 880, 859, 802, 701, 106,  65, 166, 115, 715, 681, 966, 993, 774, 505],
+                    [253, 746, 894, 828, 316, 367, 653, 431, 913, 747, 104, 771, 339, 712, 274, 104,  61, 456, 715, 805, 523],
+                    [493, 275, 779, 857, 271, 321, 671, 608, 471, 707, 274, 748, 749, 505, 644, 568, 963, 117, 133, 961, 546],
+                    [ 96, 399, 609, 773, 693, 235, 643, 783, 172, 281, 926,  36, 435, 898, 320,  28, 855, 418, 67, 954, 344],
+                    [421, 429, 219, 376, 461, 755, 444, 587, 576,  57, 592, 463,  27, 833, 968, 702, 232, 808, 248, 825, 989],
+                    [324, 270, 796,  37, 152,  27, 676, 480, 167, 595,  33, 684, 392, 803, 247, 104, 239, 374, 421, 743, 161],
+                    [352, 484, 281, 585, 463, 852,  83, 868, 213, 579, 714, 176, 199, 205, 992, 542, 941, 847, 343, 322, 388],
+                    [814, 544, 699, 924, 200, 692, 656, 766,  72, 750, 610, 516, 593, 696, 765, 951, 218, 416, 157, 234, 505],
+                    [886, 278, 711, 151, 649, 114, 342, 912, 678,  47,  58, 662, 964, 256, 493, 979, 216, 716, 92, 492, 937],
+                    [237, 147, 526, 102, 460, 492, 121,   4, 950,  13,  24, 467, 422,  17, 836, 229, 791, 647, 883, 469, 177]])
 
-print(bundleAssignment)
+
+bundleAssignment = np.array([[1, 1, 1, 0, 0],
+                             [0, 0, 0, 1, 1]])
+
 solver = EFXSolver()
-print(solver.findEFX(values, bundleAssignment))
+
+print(solver.findEFX(values,u.generateBundleAssignmentWithDraftAndVariance(values)))
+
+print("With normal Draft " + str(u.checkConditions(values,u.generateBundleAssignmentWithDraft(values))))
+
+print("With variance draft " + str(u.checkConditions(values,u.generateBundleAssignmentWithDraftAndVariance(values)))) 
+

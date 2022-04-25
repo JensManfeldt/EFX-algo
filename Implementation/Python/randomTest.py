@@ -3,15 +3,16 @@ import efxSolver
 import util as u    
 
 if __name__ == '__main__':
-    np.random.seed(420)
+    np.random.seed(112345)
 
-    for i in range(100000):
-        numAgents = np.random.randint(2,101)
+    for i in range(500000):
+        numAgents = np.random.randint(2,5)
 
-        numItems = np.random.randint(1,np.random.randint(1,5)*numAgents+1)+numAgents
-        valueationMatrix = u.generateValueations(numAgents,numItems)
+        numItems = np.random.randint(numAgents*3,numAgents*3+numAgents)
+        valueationMatrix = u.generateRecursiveValues(numAgents,numItems)
+        print(valueationMatrix)
 
-        bundleAssignment = u.generateBundleAssignmentWithDraft(valueationMatrix)
+        bundleAssignment = u.generateBundleAssignmentWithDraftAndVariance(valueationMatrix)
 
         nashBefore = u.calcNashWellFare(valueationMatrix,bundleAssignment)
         
@@ -32,7 +33,7 @@ if __name__ == '__main__':
             print("donationsList")
             print(donationsList)
             print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
-            u.saveProblem(i,valueationMatrix,bundleAssignment)
+            u.saveProblem(str(i) + "EFX Bug",valueationMatrix,bundleAssignment)
         elif nashAfter < 1/2*nashBefore: # Algo made a mistake
             print("Nash below guarantee")
             print("Value Matrix")
@@ -44,7 +45,7 @@ if __name__ == '__main__':
             print("donationsList")
             print(donationsList)
             print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
-            u.saveProblem(i,valueationMatrix,bundleAssignment)
+            u.saveProblem(str(i) + "Nash Bug",valueationMatrix,bundleAssignment)
         elif counter > 0:
             print("**** NEW EXAMPLE **** ")
             print("Value Matrix")
@@ -56,7 +57,8 @@ if __name__ == '__main__':
             print("donationsList")
             print(donationsList)
             print("************")
-            u.saveProblem(i,valueationMatrix,bundleAssignment)
+            u.saveProblem(str(i) + "VarianceExample" ,valueationMatrix,bundleAssignment)
+            break
 
         else : 
             print("Example number : " + str(i) + " with " + str(numAgents) + " agents and " + str(numItems) + " items done. After " + str(counter) + " recursive calls. Donated " + str(sum(donationsList)) + " items ")
