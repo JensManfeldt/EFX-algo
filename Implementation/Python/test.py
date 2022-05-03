@@ -283,7 +283,7 @@ class Test(unittest.TestCase):
         solver = efxSolver.EFXSolver()
         solver.setUp(agentValueations,bundleAssignemnts)
 
-        solver.bundleAssigmentZ = np.array([[1, 1, 0, 1, 1],
+        solver.bundleAssignmentZ = np.array([[1, 1, 0, 1, 1],
                                             [0, 0, 0, 0, 0],
                                             [0, 0, 0, 0, 0]])
         path = np.array([])
@@ -308,7 +308,7 @@ class Test(unittest.TestCase):
         solver = efxSolver.EFXSolver()
         solver.setUp(agentValueations,bundleAssignemnts)
 
-        solver.bundleAssigmentZ = np.array([[1, 0, 0, 0, 0],
+        solver.bundleAssignmentZ = np.array([[1, 0, 0, 0, 0],
                                             [0, 0, 1, 1, 0],
                                             [0, 0, 0, 0, 1]])
         path = np.array([[2,1]])
@@ -339,7 +339,7 @@ class Test(unittest.TestCase):
         solver = efxSolver.EFXSolver()
         solver.setUp(agentValueations,bundleAssignemnts)
 
-        solver.bundleAssigmentZ = np.array([[0, 1, 0, 0, 0, 0],
+        solver.bundleAssignmentZ = np.array([[0, 1, 0, 0, 0, 0],
                                             [0, 0, 1, 0, 0, 0],
                                             [0, 0, 0, 1, 0, 0],
                                             [0, 0, 0, 0, 1, 0],

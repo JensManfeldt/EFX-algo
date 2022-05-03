@@ -10,7 +10,6 @@ if __name__ == '__main__':
 
         numItems = np.random.randint(numAgents*3,numAgents*3+numAgents)
         valueationMatrix = u.generateRecursiveValues(numAgents,numItems)
-        print(valueationMatrix)
 
         bundleAssignment = u.generateBundleAssignmentWithDraftAndVariance(valueationMatrix)
 
