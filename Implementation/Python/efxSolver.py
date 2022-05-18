@@ -85,16 +85,19 @@ class EFXSolver:
 
             copy = np.matrix.copy(self.feasibilityGraph)
 
-            max = np.max(copy)
-            copy = max - copy
-            row, col = scipy.optimize.linear_sum_assignment(copy)
+            #max = np.max(copy)
+            #copy = max - copy
+            row, col = scipy.optimize.linear_sum_assignment(copy,maximize=True)
 
             matching = []
             for i in range(len(row)):
                 matching.append([row[i],col[i]])           
             
+            # Find unmatched agent and delete non edges from matching
+            unMatchedBundle = -1
             for i in range(len(matching)-1, -1, -1):
                 if self.feasibilityGraph[matching[i][0],matching[i][1]] == 0: # Is not an edge in orginal
+                    unMatchedBundle = matching[i][1]
                     del matching[i]
                     break
 
@@ -102,19 +105,19 @@ class EFXSolver:
                 return self.createReturnMatrix(matching),self.donationList, True
             
             matching = np.array(matching)
-            # Find unmatched agent
+            
 
-            unmatchedBundle = -1
-            bundleMatched = matching[:,1]
-            for i in range(self.n):
-               if not (i in bundleMatched):
-                   unmatchedBundle = i
-                   break
+            #unmatchedBundle = -1
+            #bundleMatched = matching[:,1]
+            #for i in range(self.n):
+            #   if not (i in bundleMatched):
+            #       unmatchedBundle = i
+            #       break
             
             itemRemoved = False
             while not itemRemoved:
 
-                path, unmatchedAgent = self.followPath(unmatchedBundle, matching)
+                path, unmatchedAgent = self.followPath(unMatchedBundle, matching)
 
                 robustDemandBundle, leastValueItemIndex = self.findRobustDemand(unmatchedAgent)
 

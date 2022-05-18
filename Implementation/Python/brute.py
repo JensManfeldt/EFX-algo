@@ -1,4 +1,9 @@
 import numpy as np
+import util as u
+import adaptorSpliddit
+import os
+
+dataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/realData"
 
 class Brute:
 
@@ -46,13 +51,20 @@ class Brute:
 
         return welFare
 
+valueationMatrix = adaptorSpliddit.create_valueation_matrix(dataPath + str(18))
 
-Ae = np.array([[20,1,1],
-               [1,20,1],
-               [1,1,20]])
 
-Ae2 = np.array([[10,10,10,1,1],[1,1,1,50,1],[1,1,1,1,50]])
+dataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/"
+savePath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/optimalNashAllocSpliddit/"
+for file in os.listdir(dataPath):
+    print("Working on problem " + str(file))
+    valueationMatrix = adaptorSpliddit.create_valueation_matrix(dataPath + str(file))
+    problemTime = pow(valueationMatrix.shape[0],valueationMatrix.shape[1])
+    if problemTime >= 20000000:
+        print("Problem " + str(file) + " to big")
+        continue
+    b = Brute(valueationMatrix.shape[0],valueationMatrix.shape[1],valueationMatrix)
+    alloc, bestNash = b.findOptimalNash()
+    u.saveOptimalAlloction(file,alloc,bestNash)
 
-b = Brute(3,5,Ae2)
-
-print(b.findOptimalNash())
+    
