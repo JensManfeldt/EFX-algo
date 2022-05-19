@@ -8,7 +8,7 @@ dataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/realData"
 class Brute:
 
     def __init__(self, numAgents, numItems, agentsValuations):
-        self.bestNashSoFor = 0
+        self.bestNashSoFor = -1
         self.bestAlloc = np.zeros([numAgents,numItems])
         self.agentsValuations = agentsValuations
         self.itemArray = np.zeros(numItems, dtype=int)
@@ -51,8 +51,6 @@ class Brute:
 
         return welFare
 
-valueationMatrix = adaptorSpliddit.create_valueation_matrix(dataPath + str(18))
-
 
 dataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/"
 savePath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/optimalNashAllocSpliddit/"
@@ -67,4 +65,4 @@ for file in os.listdir(dataPath):
     alloc, bestNash = b.findOptimalNash()
     u.saveOptimalAlloction(file,alloc,bestNash)
 
-    
+

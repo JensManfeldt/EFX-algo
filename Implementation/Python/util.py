@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.optimize
 
 def generateBundleAssignmentWithDraft(agentsValueations):
     copy = np.matrix.copy(agentsValueations)
@@ -75,6 +76,31 @@ def generateBundleAssignmentWithDraftAndVariance(agentsValueations):
 
     return bundleAssignement
 
+def generateBundleAssignmentRhoBound(agentsValueactions):
+    row,col = scipy.optimize.linear_sum_assignment(agentsValueactions,maximize=True)
+    
+    copy = np.matrix.copy(agentsValueactions)
+    
+    bundleAssignment = np.zeros(agentsValueactions.shape)
+
+    for i in range(len(row)):
+        bundleAssignment[row[i],col[i]] = 1
+        copy[:,col[i]] = -1
+    
+    for j in range(agentsValueactions.shape[1] - agentsValueactions.shape[0]):
+        agentToPick = j % agentsValueactions.shape[0]
+
+        bestItem = int(np.argmax(copy[agentToPick,:]))
+        
+        bundleAssignment[agentToPick,bestItem] = 1
+
+        copy[:,bestItem] = -1
+
+    return bundleAssignment
+
+
+
+
 def saveProblem(filename, agentsValueations,bundleAssignment):
     with open("/home/jens/Skrivebord/F2022/bachelor/EFX-algo/InterestingExamples/" + str(filename), "w+") as file: 
         file.write("Values\n")
@@ -123,5 +149,7 @@ def saveOptimalAlloction(filename, bundleAlloction, optNash):
                 file.write(str(bundleAlloction[i,j]) + "\n")
     
 
+x = np.array([[1,2,5],[5,2,3]])
 
+generateBundleAssignmentRhoBound(x)
 
