@@ -9,7 +9,7 @@ import pandas as p
 
 
 
-def runExperiment(agentsValueaction, bundleAssignment, problemName):
+def runExperiment(agentsValueaction, problemName):
     n = valueationMatrix.shape[0]
     k = valueationMatrix.shape[1]
     solver = efxSolver.EFXSolver()
@@ -111,10 +111,10 @@ if __name__ == "__main__":
         #numItems = np.random.randint(numAgents,numAgents*5)
         #valueationMatrix = u.generateRecursiveValues(numAgents,numItems)
 
-        bundleAssign = u.generateBundleAssignmentWithDraft(valueationMatrix)
-        
         #print("Running experiment nr : " + str(file))
-        data = runExperiment(valueationMatrix,bundleAssign, file[8:])
+        data = runExperiment(valueationMatrix, file[8:])
+
+            
         allData[i,:] = data
         i += 1
     

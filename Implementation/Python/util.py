@@ -77,7 +77,19 @@ def generateBundleAssignmentWithDraftAndVariance(agentsValueations):
     return bundleAssignement
 
 def generateBundleAssignmentRhoBound(agentsValueactions):
-    row,col = scipy.optimize.linear_sum_assignment(agentsValueactions,maximize=True)
+
+    copy = np.matrix.copy(agentsValueactions)
+
+    # removeing zeros and make product to sum
+    #for i in range(copy.shape[0]):
+    #    for j in range(copy.shape[1]):
+    #        if copy[i,j] > 0:
+    #            copy[i,j] = np.log(copy[i,j])
+    #        else : 
+    #            copy[i,j] = np.finfo(float).eps
+
+
+    row,col = scipy.optimize.linear_sum_assignment(copy,maximize=True)
     
     copy = np.matrix.copy(agentsValueactions)
     
@@ -147,9 +159,6 @@ def saveOptimalAlloction(filename, bundleAlloction, optNash):
         for i in range(bundleAlloction.shape[0]):
             for j in range(bundleAlloction.shape[1]):
                 file.write(str(bundleAlloction[i,j]) + "\n")
-    
 
-x = np.array([[1,2,5],[5,2,3]])
 
-generateBundleAssignmentRhoBound(x)
 
