@@ -20,6 +20,7 @@ def runExperiment(agentsValueaction, problemName):
     try :
         optAlloc, optimalNashBefore = LoadoptimalExample(problemName, n,k)
         optAlloc, optDonationList, optCounter = solver.findEFX(agentsValueaction,optAlloc,delta=0)
+        optEnvy, _ = envyOfDonatedItems(agentsValueaction,optAlloc,optDonationList)
         optimalNashAfter = u.calcNashWellFare(agentsValueaction,optAlloc)
     except:
         optimalNashBefore = np.infty
@@ -57,7 +58,7 @@ def runExperiment(agentsValueaction, problemName):
 
     MatchingNashAfter = u.calcNashWellFare(agentsValueaction,MatchingAlloc)
 
-    return [problemName, recusiveUpperbound, EF1Counter, MatchingCounter, optimalNashBefore, optimalNashAfter, EF1NashBefore, EF1NashAfter, EF1rho, EF1envy, MatchingNashBefore, MatchingNashAfter, Matchingrho, Matchingenvy] 
+    return [problemName, recusiveUpperbound, EF1Counter, MatchingCounter, optimalNashBefore, optimalNashAfter, optEnvy, EF1NashBefore, EF1NashAfter, EF1rho, EF1envy, MatchingNashBefore, MatchingNashAfter, Matchingrho, Matchingenvy] 
 
 
 def LoadoptimalExample(filename, numAgents, numItems):
@@ -113,6 +114,8 @@ if __name__ == "__main__":
 
         #print("Running experiment nr : " + str(file))
         data = runExperiment(valueationMatrix, file[8:])
+        if data[10] < data[6]:
+            print(str(file))
 
             
         allData[i,:] = data
