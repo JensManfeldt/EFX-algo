@@ -15,7 +15,7 @@ class Test(unittest.TestCase):
                                      [2,3]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList = solver.algo1(agentValueations,bundleAssignemnts)
+        matching, donationList = solver.basicAlgorithm(agentValueations,bundleAssignemnts)
         np.testing.assert_array_equal(matching,np.array([[1,0],[0,1]]))
         np.testing.assert_array_equal(donationList,np.array([0,0]))
 
@@ -26,7 +26,7 @@ class Test(unittest.TestCase):
                                      [2,3]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList, efx = solver.algo2(agentValueations,bundleAssignemnts,0.5)
+        matching, donationList, efx = solver.advancedAlgorithm(agentValueations,bundleAssignemnts,0.5)
         np.testing.assert_array_equal(matching,np.array([[1,0],[0,1]]))
         np.testing.assert_array_equal(donationList,np.array([0,0]))
         self.assertTrue(efx)
@@ -38,7 +38,7 @@ class Test(unittest.TestCase):
                                      [2,3]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList = solver.algo1(agentValueations,bundleAssignemnts)
+        matching, donationList = solver.basicAlgorithm(agentValueations,bundleAssignemnts)
         np.testing.assert_array_equal(matching,np.array([[0,1],
                                                          [1,0]]))
         np.testing.assert_array_equal(donationList,np.array([0,0]))
@@ -50,7 +50,7 @@ class Test(unittest.TestCase):
                                      [2,3]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList, efx = solver.algo2(agentValueations,bundleAssignemnts,0.5)
+        matching, donationList, efx = solver.advancedAlgorithm(agentValueations,bundleAssignemnts,0.5)
         np.testing.assert_array_equal(matching,np.array([[0,1],
                                                          [1,0]]))
         np.testing.assert_array_equal(donationList,np.array([0,0]))
@@ -68,7 +68,7 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 1, 0]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList = solver.algo1(agentValueations,bundleAssignemnts)
+        matching, donationList = solver.basicAlgorithm(agentValueations,bundleAssignemnts)
         
         np.testing.assert_array_equal(matching,np.array([[0,0,0,0,1],
                                                          [0,0,1,0,0],
@@ -88,7 +88,7 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 1, 0]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList, efx = solver.algo2(agentValueations,bundleAssignemnts,0)
+        matching, donationList, efx = solver.advancedAlgorithm(agentValueations,bundleAssignemnts,0)
         
         np.testing.assert_array_equal(matching,np.array([[0,0,0,0,1],
                                                          [0,1,0,0,0],
@@ -131,7 +131,7 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 1, 0, 1]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList = solver.algo1(agentValueations,bundleAssignemnts)
+        matching, donationList = solver.basicAlgorithm(agentValueations,bundleAssignemnts)
         
         np.testing.assert_array_equal(matching,np.array([[0,0,0,0,1,0],
                                                          [0,0,0,1,0,1],
@@ -152,7 +152,7 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 1, 0, 1]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList, efx = solver.algo2(agentValueations,bundleAssignemnts,0)
+        matching, donationList, efx = solver.advancedAlgorithm(agentValueations,bundleAssignemnts,0)
         
         np.testing.assert_array_equal(matching,np.array([[0,0,0,0,1,0],
                                                          [0,1,0,0,0,0],
@@ -192,7 +192,7 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 0, 1]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList = solver.algo1(agentValueations,bundleAssignemnts)
+        matching, donationList = solver.basicAlgorithm(agentValueations,bundleAssignemnts)
 
         np.testing.assert_array_equal(matching,np.array([[1, 0, 0, 0, 0],
                                                          [0, 0, 0, 1, 0],
@@ -209,7 +209,7 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 0, 1]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList, efx = solver.algo2(agentValueations,bundleAssignemnts,0)
+        matching, donationList, efx = solver.advancedAlgorithm(agentValueations,bundleAssignemnts,0)
 
         np.testing.assert_array_equal(matching,np.array([[1, 0, 0, 0, 0],
                                                          [0, 0, 0, 1, 0],
@@ -227,7 +227,7 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 0, 0]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList = solver.algo1(agentValueations,bundleAssignemnts)
+        matching, donationList = solver.basicAlgorithm(agentValueations,bundleAssignemnts)
 
         np.testing.assert_array_equal(matching,np.array([[1, 0, 0, 0, 0],
                                                          [0, 0, 0, 0, 0],
@@ -244,7 +244,7 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 0, 0]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList, efx = solver.algo2(agentValueations,bundleAssignemnts,0)
+        matching, donationList, efx = solver.advancedAlgorithm(agentValueations,bundleAssignemnts,0)
 
         np.testing.assert_array_equal(matching,np.array([[0, 1, 1, 1, 1],
                                                          [1, 0, 0, 0, 0],

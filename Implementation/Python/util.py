@@ -153,7 +153,7 @@ def checkConditions(agentsValueations, bundleAssignment):
     return False
 
 def saveOptimalAlloction(filename, bundleAlloction, optNash):
-    path = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/optimalNashAllocSpliddit/realData"
+    path = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/optimalNashDemo/"
     with open(path + str(filename), "w+") as file:
         file.write(str(optNash) + "\n")
         for i in range(bundleAlloction.shape[0]):

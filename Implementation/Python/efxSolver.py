@@ -23,7 +23,7 @@ class EFXSolver:
             for j in range(self.n):
                 self.updateEFXValueationForAgentAndBundle(i,j)
                 
-    def algo1(self, agentsEval, bundleAssigment):
+    def basicAlgorithm(self, agentsEval, bundleAssigment):
 
         self.setUp(agentsEval, bundleAssigment)
 
@@ -70,13 +70,13 @@ class EFXSolver:
             self.updateValueationsAndUpdateFeasibilityGraph(leastValueItemIndex,bundleToTouch)
 
     def findEFX(self, agentsEval, bundleAssigment, delta=0, counter=0):     
-        allocation, donationlist, isEFX = self.algo2(agentsEval, bundleAssigment, delta)
+        allocation, donationlist, isEFX = self.advancedAlgorithm(agentsEval, bundleAssigment, delta)
         if(isEFX):
             return allocation, donationlist, counter
         else: 
             return self.findEFX(agentsEval, allocation, delta, counter + 1)
 
-    def algo2(self, agentsEval, bundleAssigment, delta):
+    def advancedAlgorithm(self, agentsEval, bundleAssigment, delta):
         self.setUp(agentsEval, bundleAssigment)
 
         self.feasibilityGraph = self.buildFeasibilityGraph()
@@ -99,7 +99,6 @@ class EFXSolver:
                 if self.feasibilityGraph[matching[i][0],matching[i][1]] == 0: # Is not an edge in orginal
                     unMatchedBundle = matching[i][1]
                     del matching[i]
-                    break
 
             if len(matching) == self.n:
                 return self.createReturnMatrix(matching),self.donationList, True
