@@ -26,4 +26,4 @@ def create_valueation_matrix(datafile):
     return valueationMatrix
 
 
-print(create_valueation_matrix("/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/realData5775"))
+print(create_valueation_matrix("/home/jens/Skrivebord/F2022/bachelor/EFX-algo/DemoData/fakeData34273"))

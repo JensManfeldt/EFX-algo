@@ -1,5 +1,7 @@
 import numpy as np
 import scipy.optimize
+import pandas as p
+from math import floor
 
 def generateBundleAssignmentWithDraft(agentsValueations):
     copy = np.matrix.copy(agentsValueations)
@@ -54,6 +56,13 @@ def generateBundleAssignment(numAgents,numItems):
         bundleAssignement[np.random.randint(0,numAgents),k] = 1
     return bundleAssignement
 
+def generateBlindDraft(agentsValueations):
+    #copy = np.matrix.copy(agentsValueations)
+    bundleAssignement = np.zeros([agentsValueations.shape[0],agentsValueations.shape[1]], dtype=int)
+    for j in range(agentsValueations.shape[1]):
+        agentToGive = j % agentsValueations.shape[0]
+        bundleAssignement[agentToGive, j] = 1
+    return bundleAssignement
 def generateBundleAssignmentWithDraftAndVariance(agentsValueations):
     copy = np.matrix.copy(agentsValueations)
     copy = (copy.T / np.mean(copy,axis=1)).T
@@ -110,9 +119,6 @@ def generateBundleAssignmentRhoBound(agentsValueactions):
 
     return bundleAssignment
 
-
-
-
 def saveProblem(filename, agentsValueations,bundleAssignment):
     with open("/home/jens/Skrivebord/F2022/bachelor/EFX-algo/InterestingExamples/" + str(filename), "w+") as file: 
         file.write("Values\n")
@@ -160,5 +166,18 @@ def saveOptimalAlloction(filename, bundleAlloction, optNash):
             for j in range(bundleAlloction.shape[1]):
                 file.write(str(bundleAlloction[i,j]) + "\n")
 
+def LoadoptimalExample(filename, numAgents, numItems, path):
+    with open(path+filename,'r') as file: 
+        text = file.read()
+        lines = text.split('\n')
+        optNash = lines[0]
+        allocaMatrix = np.zeros([numAgents, numItems])
+        for i in range(1,len(lines)-1):
+            allocaMatrix[floor((i-1) / numItems), (i-1) % (numItems)] = int(lines[i][0])
 
+    return allocaMatrix, float(optNash)
+
+def writeToCSV(data, name):
+    df = p.DataFrame(data)
+    df.to_excel(name + ".xlsx",index=False)
 

@@ -85,8 +85,6 @@ class EFXSolver:
 
             copy = np.matrix.copy(self.feasibilityGraph)
 
-            #max = np.max(copy)
-            #copy = max - copy
             row, col = scipy.optimize.linear_sum_assignment(copy,maximize=True)
 
             matching = []
@@ -104,14 +102,6 @@ class EFXSolver:
                 return self.createReturnMatrix(matching),self.donationList, True
             
             matching = np.array(matching)
-            
-
-            #unmatchedBundle = -1
-            #bundleMatched = matching[:,1]
-            #for i in range(self.n):
-            #   if not (i in bundleMatched):
-            #       unmatchedBundle = i
-            #       break
             
             itemRemoved = False
             while not itemRemoved:
@@ -143,12 +133,9 @@ class EFXSolver:
                     currentValueationOfBundle = self.agentsValuationOfBundle[robustDemandBundle, robustDemandBundle]
                     orginalValueationOfBundle = sum(self.agentsValuations[robustDemandBundle,:] * self.bundleAssignmentX[robustDemandBundle,:])
                     
-
                     if (2 + delta) * currentValueationOfBundle < orginalValueationOfBundle:
                         self.updateOrginalAlloc(path, robustDemandBundle, unmatchedAgent)
                         return self.bundleAssignmentX, np.zeros(self.m), False
-
-                    
 
                     itemRemoved = True
 
