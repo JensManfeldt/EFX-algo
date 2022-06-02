@@ -1,7 +1,10 @@
+from more_itertools import first
 import numpy as np
 import scipy.optimize
 import pandas as p
 from math import floor
+import matplotlib.pyplot as plt
+
 
 def generateBundleAssignmentWithDraft(agentsValueations):
     copy = np.matrix.copy(agentsValueations)
@@ -63,6 +66,7 @@ def generateBlindDraft(agentsValueations):
         agentToGive = j % agentsValueations.shape[0]
         bundleAssignement[agentToGive, j] = 1
     return bundleAssignement
+
 def generateBundleAssignmentWithDraftAndVariance(agentsValueations):
     copy = np.matrix.copy(agentsValueations)
     copy = (copy.T / np.mean(copy,axis=1)).T
@@ -158,8 +162,7 @@ def checkConditions(agentsValueations, bundleAssignment):
 
     return False
 
-def saveOptimalAlloction(filename, bundleAlloction, optNash):
-    path = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/optimalNashDemo/"
+def saveOptimalAlloction(filename, bundleAlloction, optNash, path):
     with open(path + str(filename), "w+") as file:
         file.write(str(optNash) + "\n")
         for i in range(bundleAlloction.shape[0]):
@@ -181,3 +184,15 @@ def writeToCSV(data, name):
     df = p.DataFrame(data)
     df.to_excel(name + ".xlsx",index=False)
 
+def plotHeatMap(title,yaxisLables,xaxisLables, dataMatrix):
+    #plt.figure(num=None,figsize=(1000,1000), dpi=100)
+    fig, ax = plt.subplots()
+    im = ax.imshow(dataMatrix,cmap="BuPu")
+
+    ax.set_xticks(np.arange(len(xaxisLables)), labels=xaxisLables)
+    ax.set_yticks(np.arange(len(yaxisLables)), labels=yaxisLables)
+    plt.xticks(fontsize=6) 
+
+    ax.set_title(title)
+    fig.tight_layout()
+    plt.savefig(str(title)+".png", dpi=200)

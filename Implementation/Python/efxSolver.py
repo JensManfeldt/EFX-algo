@@ -69,12 +69,18 @@ class EFXSolver:
 
             self.updateValueationsAndUpdateFeasibilityGraph(leastValueItemIndex,bundleToTouch)
 
-    def findEFX(self, agentsEval, bundleAssigment, delta=0, counter=0):     
+    def findEFX(self, agentsEval, bundleAssigment, delta=0):     
+        isEFX = False
+        counter = 0
         allocation, donationlist, isEFX = self.advancedAlgorithm(agentsEval, bundleAssigment, delta)
-        if(isEFX):
-            return allocation, donationlist, counter
-        else: 
-            return self.findEFX(agentsEval, allocation, delta, counter + 1)
+
+        while not isEFX:
+            allocation, donationlist, isEFX = self.advancedAlgorithm(agentsEval, allocation, delta)
+            counter += 1
+
+        return allocation, donationlist, counter
+
+
 
     def advancedAlgorithm(self, agentsEval, bundleAssigment, delta):
         self.setUp(agentsEval, bundleAssigment)

@@ -20,7 +20,6 @@ if __name__ == '__main__':
         allocation, donationsList, counter = solver.findEFX(valueationMatrix,np.matrix.copy(bundleAssignment), 0)
 
         nashAfter = u.calcNashWellFare(valueationMatrix,allocation)
-
         if not u.isAllocEFX(allocation,valueationMatrix): # the algo have made a mistake
             print("Not efx")
             print("Value Matrix")
@@ -45,19 +44,19 @@ if __name__ == '__main__':
             print(donationsList)
             print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
             u.saveProblem(str(i) + "Nash Bug",valueationMatrix,bundleAssignment)
-        elif counter > 0:
-            print("**** NEW EXAMPLE **** ")
-            print("Value Matrix")
-            print(valueationMatrix)
-            print("BundleAssignment")
-            print(bundleAssignment)
-            print("Allocation")
-            print(allocation)
-            print("donationsList")
-            print(donationsList)
-            print("************")
-            u.saveProblem(str(i) + "VarianceExample" ,valueationMatrix,bundleAssignment)
-            break
+        #elif counter > 0:
+        #    print("**** NEW EXAMPLE **** ")
+        #    print("Value Matrix")
+        #    print(valueationMatrix)
+        #    print("BundleAssignment")
+        #    print(bundleAssignment)
+        #    print("Allocation")
+        #    print(allocation)
+        #    print("donationsList")
+        #    print(donationsList)
+        #    print("************")
+        #    u.saveProblem(str(i) + "VarianceExample" ,valueationMatrix,bundleAssignment)
+        #    break
 
         else : 
             print("Example number : " + str(i) + " with " + str(numAgents) + " agents and " + str(numItems) + " items done. After " + str(counter) + " recursive calls. Donated " + str(sum(donationsList)) + " items ")
