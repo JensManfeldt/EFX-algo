@@ -196,92 +196,92 @@ def runExperiment3and4():
                 if blindCounter != 0:
                     blindCounterMatrix[i-1,j] += blindCounter
 
-                EF1Assignment = u.generateBundleAssignmentWithDraft(valueationMatrix)
-
-                EF1NashBefore = u.calcNashWellFare(valueationMatrix,EF1Assignment)
-
-                EF1Alloc, EF1donationList, EF1counter = solver.findEFX(valueationMatrix, EF1Assignment)
-
-                EF1Envy, _ = envyOfDonatedItems(valueationMatrix, EF1Alloc, EF1donationList)
-                
-                EF1NashAfter = u.calcNashWellFare(valueationMatrix, EF1Alloc)
-
-                EF1RetentionMatrix[i-1,j] += EF1NashAfter / EF1NashBefore
-
-                if EF1Envy:
-                    EF1EnvyMatrix[i-1,j] += 1  
-                
-                if EF1counter != 0:
-                    EF1CounterMatrix[i-1,j] += EF1counter
-
-                matchingAssignment = u.generateBundleAssignmentRhoBound(valueationMatrix)
-
-                matchingNashBefore = u.calcNashWellFare(valueationMatrix, matchingAssignment)
-
-                matchingAlloc, matchingDonationList, matchingCounter = solver.findEFX(valueationMatrix, matchingAssignment)
-
-                matchingEnvy, _ = envyOfDonatedItems(valueationMatrix, matchingAlloc, matchingDonationList)
-
-                matchingNashAfter = u.calcNashWellFare(valueationMatrix, matchingAlloc)
-
-                matchingRentionMatrix[i-1,j] += matchingNashAfter / matchingNashBefore
-
-                if matchingEnvy:
-                    matchingEnvyMatrix[i-1,j] += 1
-
-                if matchingCounter != 0:
-                    matchingCounterMatrix[i-1,j] += matchingCounter
-
-
-                
-
+                #EF1Assignment = u.generateBundleAssignmentWithDraft(valueationMatrix)
+#
+                #EF1NashBefore = u.calcNashWellFare(valueationMatrix,EF1Assignment)
+#
+                #EF1Alloc, EF1donationList, EF1counter = solver.findEFX(valueationMatrix, EF1Assignment)
+#
+                #EF1Envy, _ = envyOfDonatedItems(valueationMatrix, EF1Alloc, EF1donationList)
+                #
+                #EF1NashAfter = u.calcNashWellFare(valueationMatrix, EF1Alloc)
+#
+                #EF1RetentionMatrix[i-1,j] += EF1NashAfter / EF1NashBefore
+#
+                #if EF1Envy:
+                #    EF1EnvyMatrix[i-1,j] += 1  
+                #
+                #if EF1counter != 0:
+                #    EF1CounterMatrix[i-1,j] += EF1counter
+#
+                #matchingAssignment = u.generateBundleAssignmentRhoBound(valueationMatrix)
+#
+                #matchingNashBefore = u.calcNashWellFare(valueationMatrix, matchingAssignment)
+#
+                #matchingAlloc, matchingDonationList, matchingCounter = solver.findEFX(valueationMatrix, matchingAssignment)
+#
+                #matchingEnvy, _ = envyOfDonatedItems(valueationMatrix, matchingAlloc, matchingDonationList)
+#
+                #matchingNashAfter = u.calcNashWellFare(valueationMatrix, matchingAlloc)
+#
+                #matchingRentionMatrix[i-1,j] += matchingNashAfter / matchingNashBefore
+#
+                #if matchingEnvy:
+                #    matchingEnvyMatrix[i-1,j] += 1
+#
+                #if matchingCounter != 0:
+                #    matchingCounterMatrix[i-1,j] += matchingCounter
+#
+#
+                #
+#
     u.writeToCSV(blindEnvyMatrix,"experiment3blind")
-    u.writeToCSV(EF1EnvyMatrix, "experiment3EF1")
-    u.writeToCSV(matchingEnvyMatrix, "experiment3matching")
+    #u.writeToCSV(EF1EnvyMatrix, "experiment3EF1")
+    #u.writeToCSV(matchingEnvyMatrix, "experiment3matching")
 
     blindCounterMatrix /= numIterations
-    EF1CounterMatrix /= numIterations
-    matchingCounterMatrix /= numIterations
+    #EF1CounterMatrix /= numIterations
+    #matchingCounterMatrix /= numIterations
 
     u.writeToCSV(blindCounterMatrix,"experiment4blind")
-    u.writeToCSV(EF1CounterMatrix, "experiment4EF1")
-    u.writeToCSV(matchingCounterMatrix ,"experiment4matching")
+    #u.writeToCSV(EF1CounterMatrix, "experiment4EF1")
+    #u.writeToCSV(matchingCounterMatrix ,"experiment4matching")
 
     blindEnvyMatrix = np.delete(blindEnvyMatrix,0,0)
-    EF1EnvyMatrix = np.delete(EF1EnvyMatrix,0,0)
-    matchingEnvyMatrix = np.delete(matchingEnvyMatrix,0,0)
+    #EF1EnvyMatrix = np.delete(EF1EnvyMatrix,0,0)
+    #matchingEnvyMatrix = np.delete(matchingEnvyMatrix,0,0)
 
     blindCounterMatrix = np.delete(blindCounterMatrix,0,0)
-    EF1CounterMatrix = np.delete(EF1CounterMatrix,0,0)
-    matchingCounterMatrix = np.delete(matchingCounterMatrix,0,0)
+    #EF1CounterMatrix = np.delete(EF1CounterMatrix,0,0)
+    #matchingCounterMatrix = np.delete(matchingCounterMatrix,0,0)
 
     u.plotHeatMap("experiment3blind",[x for x in range(2,maxPossibleAgents+1)], ratioList, blindEnvyMatrix)
-    u.plotHeatMap("experiment3EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1EnvyMatrix)
-    u.plotHeatMap("experiment3matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingEnvyMatrix)
+    #u.plotHeatMap("experiment3EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1EnvyMatrix)
+    #u.plotHeatMap("experiment3matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingEnvyMatrix)
 
     u.plotHeatMap("experiment4blind",[x for x in range(2,maxPossibleAgents+1)], ratioList, blindCounterMatrix)
-    u.plotHeatMap("experiment4EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1CounterMatrix)
-    u.plotHeatMap("experiment4matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingCounterMatrix)
+    #u.plotHeatMap("experiment4EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1CounterMatrix)
+    #u.plotHeatMap("experiment4matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingCounterMatrix)
 
     blindRetentionMatrix = (blindRetentionMatrix / numIterations) * 100
-    EF1RetentionMatrix = (EF1RetentionMatrix / numIterations) * 100
-    matchingRentionMatrix = (matchingRentionMatrix / numIterations) * 100
+    #EF1RetentionMatrix = (EF1RetentionMatrix / numIterations) * 100
+    #matchingRentionMatrix = (matchingRentionMatrix / numIterations) * 100
 
     u.writeToCSV(blindRetentionMatrix,"experiment5blind")
-    u.writeToCSV(EF1RetentionMatrix, "experiment5EF1")
-    u.writeToCSV(matchingRentionMatrix, "experiment5matching")
+    #u.writeToCSV(EF1RetentionMatrix, "experiment5EF1")
+    #u.writeToCSV(matchingRentionMatrix, "experiment5matching")
 
     blindRetentionMatrix = np.delete(blindRetentionMatrix,0,0)
-    EF1RetentionMatrix = np.delete(EF1RetentionMatrix,0,0)
-    matchingRentionMatrix = np.delete(matchingRentionMatrix,0,0)
+    #EF1RetentionMatrix = np.delete(EF1RetentionMatrix,0,0)
+    #matchingRentionMatrix = np.delete(matchingRentionMatrix,0,0)
 
-    blindRetentionMatrix = 100 - blindRetentionMatrix
-    EF1RetentionMatrix = 100 - EF1RetentionMatrix
-    matchingRentionMatrix = 100 - matchingRentionMatrix
+    blindRetentionMatrix = np.max(blindRetentionMatrix) - blindRetentionMatrix
+    #EF1RetentionMatrix = np.max(EF1RetentionMatrix) - EF1RetentionMatrix
+    #matchingRentionMatrix = np.max(matchingRentionMatrix) - matchingRentionMatrix
 
     u.plotHeatMap("experiment5blind",[x for x in range(2,maxPossibleAgents+1)], ratioList, blindRetentionMatrix)
-    u.plotHeatMap("experiment5EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1RetentionMatrix)
-    u.plotHeatMap("experiment5matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingRentionMatrix)
+    #u.plotHeatMap("experiment5EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1RetentionMatrix)
+    #u.plotHeatMap("experiment5matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingRentionMatrix)
 
 
 def envyOfDonatedItems(agentsValueaction, allocation, donationlist):
@@ -458,9 +458,9 @@ if __name__ == "__main__":
 
     #runExperiment1()
 
-    runExperiment2()
+    #runExperiment2()
     
-    #runExperiment3and4()
+    runExperiment3and4()
     
 
 

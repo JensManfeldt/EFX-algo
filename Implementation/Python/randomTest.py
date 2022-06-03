@@ -6,12 +6,12 @@ if __name__ == '__main__':
     np.random.seed(112345)
 
     for i in range(500000):
-        numAgents = np.random.randint(2,5)
+        numAgents = np.random.randint(2,50)
 
-        numItems = np.random.randint(numAgents*3,numAgents*3+numAgents)
-        valueationMatrix = u.generateRecursiveValues(numAgents,numItems)
+        numItems = np.random.randint(numAgents,numAgents*5+1)
+        valueationMatrix = u.generateValueations(numAgents,numItems)
 
-        bundleAssignment = u.generateBundleAssignmentWithDraftAndVariance(valueationMatrix)
+        bundleAssignment = u.generateBundleAssignmentWithDraft(valueationMatrix)
 
         nashBefore = u.calcNashWellFare(valueationMatrix,bundleAssignment)
         
@@ -44,7 +44,8 @@ if __name__ == '__main__':
             print(donationsList)
             print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
             u.saveProblem(str(i) + "Nash Bug",valueationMatrix,bundleAssignment)
-        #elif counter > 0:
+        elif counter > 0:
+            print(i)
         #    print("**** NEW EXAMPLE **** ")
         #    print("Value Matrix")
         #    print(valueationMatrix)
@@ -58,7 +59,7 @@ if __name__ == '__main__':
         #    u.saveProblem(str(i) + "VarianceExample" ,valueationMatrix,bundleAssignment)
         #    break
 
-        else : 
-            print("Example number : " + str(i) + " with " + str(numAgents) + " agents and " + str(numItems) + " items done. After " + str(counter) + " recursive calls. Donated " + str(sum(donationsList)) + " items ")
+        #else : 
+        #    print("Example number : " + str(i) + " with " + str(numAgents) + " agents and " + str(numItems) + " items done. After " + str(counter) + " recursive calls. Donated " + str(sum(donationsList)) + " items ")
             
 
