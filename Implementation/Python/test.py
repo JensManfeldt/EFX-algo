@@ -109,7 +109,7 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 1, 0]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList, counter = solver.findEFX(agentValueations,bundleAssignemnts)
+        matching, donationList, counter = solver.multipleRuns(agentValueations,bundleAssignemnts)
         
         np.testing.assert_array_equal(matching,np.array([[0,0,0,0,1],
                                                          [0,1,0,0,0],
@@ -173,7 +173,7 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 1, 0, 1]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList, counter = solver.findEFX(agentValueations,bundleAssignemnts)
+        matching, donationList, counter = solver.multipleRuns(agentValueations,bundleAssignemnts)
         
         np.testing.assert_array_equal(matching,np.array([[0,0,0,0,1,0],
                                                          [0,1,0,1,0,0],
@@ -262,7 +262,7 @@ class Test(unittest.TestCase):
                                       [0, 0, 0, 0, 0]])
 
         solver = efxSolver.EFXSolver()
-        matching, donationList, counter = solver.findEFX(agentValueations,bundleAssignemnts)
+        matching, donationList, counter = solver.multipleRuns(agentValueations,bundleAssignemnts)
 
         np.testing.assert_array_equal(matching,np.array([[0, 0, 1, 1, 1],
                                                          [1, 0, 0, 0, 0],

@@ -69,7 +69,7 @@ class EFXSolver:
 
             self.updateValueationsAndUpdateFeasibilityGraph(leastValueItemIndex,bundleToTouch)
 
-    def findEFX(self, agentsEval, bundleAssigment, delta=0):     
+    def multipleRuns(self, agentsEval, bundleAssigment, delta=0):     
         isEFX = False
         counter = 0
         allocation, donationlist, isEFX = self.advancedAlgorithm(agentsEval, bundleAssigment, delta)
@@ -81,8 +81,7 @@ class EFXSolver:
         return allocation, donationlist, counter
 
 
-
-    def advancedAlgorithm(self, agentsEval, bundleAssigment, delta):
+    def advancedAlgorithm(self, agentsEval, bundleAssigment, delta=0):
         self.setUp(agentsEval, bundleAssigment)
 
         self.feasibilityGraph = self.buildFeasibilityGraph()
@@ -290,5 +289,17 @@ class EFXSolver:
         else :
             self.feasibilityGraph[touchedBundle,touchedBundle] = 0
 
+
+
+
+def findEFX(valueationMatrix):
+
+    bundleAssignment = u.generateBundleAssignmentWithDraft(valueationMatrix)
+
+    solver = EFXSolver()
+
+    alloc, donationList, counter = solver.multipleRuns(valueationMatrix,bundleAssignment)
+
+    return alloc
 
 

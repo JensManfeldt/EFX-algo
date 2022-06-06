@@ -46,7 +46,7 @@ def runRhoExperiment(agentsValueaction, problemName, optimalAlloc, optNashBefore
         optEnvy = 0
         optDonationList = [0]
     else:
-        optAlloc, optDonationList, _ = solver.findEFX(agentsValueaction,optimalAlloc,delta=0)
+        optAlloc, optDonationList, _ = solver.multipleRuns(agentsValueaction,optimalAlloc,delta=0)
         optEnvy, _ = envyOfDonatedItems(agentsValueaction,optAlloc,optDonationList)
         optimalNashAfter = u.calcNashWellFare(agentsValueaction,optAlloc)
         optimalNashBefore = optNashBefore
@@ -60,7 +60,7 @@ def runRhoExperiment(agentsValueaction, problemName, optimalAlloc, optNashBefore
 
     EF1rhoBefore = calculateRho(optimalNashBefore, EF1NashBefore)
 
-    EF1Alloc, EF1donationList, EF1Counter = solver.findEFX(agentsValueaction, EF1BundleAssignment, delta=0)
+    EF1Alloc, EF1donationList, EF1Counter = solver.multipleRuns(agentsValueaction, EF1BundleAssignment, delta=0)
 
     EF1NashAfter = u.calcNashWellFare(agentsValueaction,EF1Alloc)
 
@@ -73,7 +73,7 @@ def runRhoExperiment(agentsValueaction, problemName, optimalAlloc, optNashBefore
     
     MatchingrhoBefore = calculateRho(optimalNashBefore,MatchingNashBefore)
 
-    MatchingAlloc, MatchingdonationList, MatchingCounter = solver.findEFX(agentsValueaction, MatchingBundleAssignment, delta=0)
+    MatchingAlloc, MatchingdonationList, MatchingCounter = solver.multipleRuns(agentsValueaction, MatchingBundleAssignment, delta=0)
 
     MatchingNashAfter = u.calcNashWellFare(agentsValueaction,MatchingAlloc)
 
@@ -89,7 +89,7 @@ def runSingleExperiment2(agentsValueaction, problemName, optPath):
     recusiveUpperbound = pow(n,2) * k
     try :
         optimalAssignment, optNash = u.LoadoptimalExample(problemName,n,k,optPath)
-        optAlloc, optDonationList, _ = solver.findEFX(agentsValueaction,optimalAssignment)
+        optAlloc, optDonationList, _ = solver.multipleRuns(agentsValueaction,optimalAssignment)
         optEnvy, _ = envyOfDonatedItems(agentsValueaction, optAlloc, optDonationList)
     except:
         optEnvy = np.nan
@@ -97,13 +97,13 @@ def runSingleExperiment2(agentsValueaction, problemName, optPath):
 
     EF1BundleAssignment = u.generateBundleAssignmentWithDraft(agentsValueaction)
 
-    EF1Alloc, EF1donationList, EF1Counter = solver.findEFX(agentsValueaction, EF1BundleAssignment, delta=0)
+    EF1Alloc, EF1donationList, EF1Counter = solver.multipleRuns(agentsValueaction, EF1BundleAssignment, delta=0)
 
     EF1envy, _ = envyOfDonatedItems(agentsValueaction,EF1Alloc,EF1donationList)
 
     MatchingBundleAssignment = u.generateBundleAssignmentRhoBound(agentsValueaction)
 
-    MatchingAlloc, MatchingdonationList, MatchingCounter = solver.findEFX(agentsValueaction, MatchingBundleAssignment, delta=0)
+    MatchingAlloc, MatchingdonationList, MatchingCounter = solver.multipleRuns(agentsValueaction, MatchingBundleAssignment, delta=0)
 
     Matchingenvy, _ = envyOfDonatedItems(agentsValueaction,MatchingAlloc,MatchingdonationList)
 
@@ -182,7 +182,7 @@ def runExperiment3and4():
 
                 blindNashBefore = u.calcNashWellFare(valueationMatrix,blindAssignment)
 
-                blindAlloc, blindDonationList, blindCounter = solver.findEFX(valueationMatrix, blindAssignment)
+                blindAlloc, blindDonationList, blindCounter = solver.multipleRuns(valueationMatrix, blindAssignment)
 
                 blindEnvy, _ = envyOfDonatedItems(valueationMatrix, blindAlloc, blindDonationList)
 

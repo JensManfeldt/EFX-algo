@@ -6,6 +6,8 @@ if __name__ == '__main__':
     np.random.seed(112345)
 
     for i in range(500000):
+        if i % 1000 == 0:
+            print(i)
         numAgents = np.random.randint(2,50)
 
         numItems = np.random.randint(numAgents,numAgents*5+1)
@@ -32,6 +34,7 @@ if __name__ == '__main__':
             print(donationsList)
             print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
             u.saveProblem(str(i) + "EFX Bug",valueationMatrix,bundleAssignment)
+            break
         elif nashAfter < 1/2*nashBefore: # Algo made a mistake
             print("Nash below guarantee")
             print("Value Matrix")
@@ -44,8 +47,8 @@ if __name__ == '__main__':
             print(donationsList)
             print("Nash Before : " + str(nashBefore) + " Nash After : " + str(nashAfter) + " The Ratio : " + str(100 * (nashAfter/nashBefore)))
             u.saveProblem(str(i) + "Nash Bug",valueationMatrix,bundleAssignment)
-        elif counter > 0:
-            print(i)
+            break
+        #elif counter > 0:
         #    print("**** NEW EXAMPLE **** ")
         #    print("Value Matrix")
         #    print(valueationMatrix)
