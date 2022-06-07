@@ -19,7 +19,7 @@ if __name__ == '__main__':
         
         solver = efxSolver.EFXSolver()
 
-        allocation, donationsList, counter = solver.findEFX(valueationMatrix,np.matrix.copy(bundleAssignment), 0)
+        allocation, donationsList, counter = solver.multipleRuns(valueationMatrix,np.matrix.copy(bundleAssignment), 0)
 
         nashAfter = u.calcNashWellFare(valueationMatrix,allocation)
         if not u.isAllocEFX(allocation,valueationMatrix): # the algo have made a mistake

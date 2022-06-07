@@ -6,24 +6,26 @@ import os
 import adaptorSpliddit
 import util as u
 import warnings
+import pathlib as p
 ## Does an agent envy the donated bundle
 warnings.filterwarnings('ignore')
 
 def runExperiment1():
     aggData = np.zeros([3,7])
 
-    dataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/"
-    optPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/optimalNashAllocSpliddit/realData"
-    realData, aggReal = runFromData(dataPath,optPath,"realData")
+    #dataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/"
+    dataPath = p.Path("../../RealData").absolute().resolve()
+    optPath = p.Path("../../optimalNashAllocSpliddit/realData").absolute().resolve()
+    realData, aggReal = runFromData(str(dataPath),str(optPath),"realData")
     aggData[0,:] = aggReal
 
-    dataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/DemoData/"
-    optPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/optimalNashDemo/"
+    dataPath = p.Path("../../DemoData/").absolute().resolve()
+    optPath = p.Path("../../optimalNashDemo/").absolute().resolve()
     demoData, aggDemo = runFromData(dataPath, optPath, "demoData")
     aggData[1,:] = aggDemo
 
-    dataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/randomExamples/"
-    optPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/optimalRandom/"
+    dataPath = p.Path("../../randomExamples/").absolute().resolve()
+    optPath = p.Path("../../optimalRandom/").absolute().resolve()
     randomData, aggRandom = runFromData(dataPath, optPath, "randomData")
     aggData[2,:] = aggRandom
 
@@ -143,7 +145,7 @@ def runExperiment3and4():
     ratioList = []
     ratioList = [x/10 for x in np.arange(10,41)]
     maxPossibleAgents = 20
-    numIterations = 1000
+    numIterations = 2
 
     blindRetentionMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
     EF1RetentionMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
@@ -234,8 +236,9 @@ def runExperiment3and4():
 #
 #
                 #
-#
-    u.writeToCSV(blindEnvyMatrix,"experiment3blind")
+
+    savePath = p.Path("../../HeatMaps/").absolute().resolve()
+    u.writeToCSV(blindEnvyMatrix,savePath + "experiment3Envyblind")
     #u.writeToCSV(EF1EnvyMatrix, "experiment3EF1")
     #u.writeToCSV(matchingEnvyMatrix, "experiment3matching")
 
@@ -243,7 +246,7 @@ def runExperiment3and4():
     #EF1CounterMatrix /= numIterations
     #matchingCounterMatrix /= numIterations
 
-    u.writeToCSV(blindCounterMatrix,"experiment4blind")
+    u.writeToCSV(blindCounterMatrix,savePath + "experiment4RepeatedRunsblind")
     #u.writeToCSV(EF1CounterMatrix, "experiment4EF1")
     #u.writeToCSV(matchingCounterMatrix ,"experiment4matching")
 
@@ -267,7 +270,7 @@ def runExperiment3and4():
     #EF1RetentionMatrix = (EF1RetentionMatrix / numIterations) * 100
     #matchingRentionMatrix = (matchingRentionMatrix / numIterations) * 100
 
-    u.writeToCSV(blindRetentionMatrix,"experiment5blind")
+    u.writeToCSV(blindRetentionMatrix,savePath + "experiment5Welfareblind")
     #u.writeToCSV(EF1RetentionMatrix, "experiment5EF1")
     #u.writeToCSV(matchingRentionMatrix, "experiment5matching")
 
@@ -383,11 +386,12 @@ def calculateAggragateData2(allData):
     return [optEnvy, EF1Envy, matchingEnvy, calcRepeatedRunsAvg, EF1RepeatedRunsAvg, matchingRepeatedRunsAvg, EF1RepeatedRuns, matchingRepeatedRuns]
 
 def runFromData(dataPath, optDatapath, saveFileName):
+    print(optDatapath)
     allData = np.zeros([len(os.listdir(dataPath)),16])
     i = 0
     for file in os.listdir(dataPath):
-        valueationMatrix = adaptorSpliddit.create_valueation_matrix(dataPath + str(file))
-        try :
+        valueationMatrix = adaptorSpliddit.create_valueation_matrix(str(dataPath) + "/" + str(file))
+        try : 
             optimalAlloc, optimalNashBefore = u.LoadoptimalExample(file, valueationMatrix.shape[0],valueationMatrix.shape[1], optDatapath)
         except:
             optimalAlloc = np.zeros(valueationMatrix.shape)
@@ -456,11 +460,11 @@ def aggergateDataWithDonationsExamples(realData, demoData, randomData):
 
 if __name__ == "__main__":
 
-    #runExperiment1()
+    runExperiment1()
 
     #runExperiment2()
     
-    runExperiment3and4()
+    #runExperiment3and4()
     
 
 

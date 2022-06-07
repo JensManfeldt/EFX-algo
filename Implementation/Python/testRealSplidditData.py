@@ -19,7 +19,7 @@ def testAll():
 
         if not u.isAllocEFX(bundleAssignment,valueationMatrix):
 
-            (allocMatrix,donationlist,counter) = solver.findEFX(valueationMatrix,bundleAssignment)
+            (allocMatrix,donationlist,counter) = solver.multipleRuns(valueationMatrix,bundleAssignment)
 
             if counter > 0:
                 print("**** NEW EXAMPLE ****")   

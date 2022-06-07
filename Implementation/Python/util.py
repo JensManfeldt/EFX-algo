@@ -4,6 +4,7 @@ import scipy.optimize
 import pandas as p
 from math import floor
 import matplotlib.pyplot as plt
+import pathlib as path
 
 
 def generateBundleAssignmentWithDraft(agentsValueations):
@@ -170,7 +171,7 @@ def saveOptimalAlloction(filename, bundleAlloction, optNash, path):
                 file.write(str(bundleAlloction[i,j]) + "\n")
 
 def LoadoptimalExample(filename, numAgents, numItems, path):
-    with open(path+filename,'r') as file: 
+    with open(path + filename,'r') as file: 
         text = file.read()
         lines = text.split('\n')
         optNash = lines[0]
