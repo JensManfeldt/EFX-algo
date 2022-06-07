@@ -79,7 +79,6 @@ class EFXSolver:
 
         return allocation, donationlist, counter
 
-
     def advancedAlgorithm(self, agentsEval, bundleAssigment, delta=0):
         self.setUp(agentsEval, bundleAssigment)
 

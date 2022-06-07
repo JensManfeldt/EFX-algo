@@ -1,4 +1,5 @@
-from uuid import UUID
+from dataclasses import dataclass
+import optparse
 import numpy as np
 import efxSolver
 import brute
@@ -7,26 +8,25 @@ import adaptorSpliddit
 import util as u
 import warnings
 import pathlib as p
-## Does an agent envy the donated bundle
+
 warnings.filterwarnings('ignore')
 
 def runExperiment1():
     aggData = np.zeros([3,7])
 
-    #dataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/"
     dataPath = p.Path("../../RealData").absolute().resolve()
-    optPath = p.Path("../../optimalNashAllocSpliddit/realData").absolute().resolve()
+    optPath = p.Path("../../optimalNashAllocSpliddit/").absolute().resolve()
     realData, aggReal = runFromData(str(dataPath),str(optPath),"realData")
     aggData[0,:] = aggReal
 
-    dataPath = p.Path("../../DemoData/").absolute().resolve()
-    optPath = p.Path("../../optimalNashDemo/").absolute().resolve()
-    demoData, aggDemo = runFromData(dataPath, optPath, "demoData")
+    dataPath = p.Path("../../DemoData").absolute().resolve()
+    optPath = p.Path("../../optimalNashDemo").absolute().resolve()
+    demoData, aggDemo = runFromData(str(dataPath), str(optPath), "demoData")
     aggData[1,:] = aggDemo
 
-    dataPath = p.Path("../../randomExamples/").absolute().resolve()
-    optPath = p.Path("../../optimalRandom/").absolute().resolve()
-    randomData, aggRandom = runFromData(dataPath, optPath, "randomData")
+    dataPath = p.Path("../../randomExamples").absolute().resolve()
+    optPath = p.Path("../../optimalRandom").absolute().resolve()
+    randomData, aggRandom = runFromData(str(dataPath), str(optPath), "randomData")
     aggData[2,:] = aggRandom
 
     aggergateDataWithDonationsExamples(realData, demoData, randomData)
@@ -112,14 +112,15 @@ def runSingleExperiment2(agentsValueaction, problemName, optPath):
     return [int(problemName[8:]), recusiveUpperbound, EF1Counter, MatchingCounter, EF1envy, Matchingenvy, optEnvy]
 
 def runExperiment2():
-    pathRealData = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/" 
-    pathDemoData = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/DemoData/"
+
+    pathRealData = str(p.Path("../../RealData").absolute().resolve())
+    pathDemoData = str(p.Path("../../DemoData").absolute().resolve())
     realDataMatrix = []
     demoDataMatrix = []
-    realOptPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/optimalNashAllocSpliddit/realData"
-    demoOptPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/optimalNashDemo/"
+    realOptPath = str(p.Path("../../optimalNashAllocSpliddit/").absolute().resolve())
+    demoOptPath = str(p.Path("../../optimalNashAllocSpliddit/").absolute().resolve())
     for file in os.listdir(pathRealData):
-        valueactionMatrix = adaptorSpliddit.create_valueation_matrix(pathRealData + str(file))
+        valueactionMatrix = adaptorSpliddit.create_valueation_matrix(pathRealData + "/" + str(file))
         data = runSingleExperiment2(valueactionMatrix,file, realOptPath)
         realDataMatrix.append(data)
     
@@ -128,7 +129,7 @@ def runExperiment2():
     
 
     for file in os.listdir(pathDemoData):
-        valueactionMatrix = adaptorSpliddit.create_valueation_matrix(pathDemoData + str(file))
+        valueactionMatrix = adaptorSpliddit.create_valueation_matrix(pathDemoData + "/" + str(file))
         data = runSingleExperiment2(valueactionMatrix,file, demoOptPath)
         demoDataMatrix.append(data)
 
@@ -145,7 +146,7 @@ def runExperiment3and4():
     ratioList = []
     ratioList = [x/10 for x in np.arange(10,41)]
     maxPossibleAgents = 20
-    numIterations = 2
+    numIterations = 1000
 
     blindRetentionMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
     EF1RetentionMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
@@ -175,7 +176,6 @@ def runExperiment3and4():
     solver = efxSolver.EFXSolver()
 
     for i in range(2,maxPossibleAgents+1):
-        print("i is now : " + str(i))
         for j in range(len(ratioList)):
             for k in range(numIterations):
                 valueationMatrix = u.generateValueations(i,int(np.floor(i*ratioList[j])))
@@ -198,93 +198,90 @@ def runExperiment3and4():
                 if blindCounter != 0:
                     blindCounterMatrix[i-1,j] += blindCounter
 
-                #EF1Assignment = u.generateBundleAssignmentWithDraft(valueationMatrix)
-#
-                #EF1NashBefore = u.calcNashWellFare(valueationMatrix,EF1Assignment)
-#
-                #EF1Alloc, EF1donationList, EF1counter = solver.findEFX(valueationMatrix, EF1Assignment)
-#
-                #EF1Envy, _ = envyOfDonatedItems(valueationMatrix, EF1Alloc, EF1donationList)
-                #
-                #EF1NashAfter = u.calcNashWellFare(valueationMatrix, EF1Alloc)
-#
-                #EF1RetentionMatrix[i-1,j] += EF1NashAfter / EF1NashBefore
-#
-                #if EF1Envy:
-                #    EF1EnvyMatrix[i-1,j] += 1  
-                #
-                #if EF1counter != 0:
-                #    EF1CounterMatrix[i-1,j] += EF1counter
-#
-                #matchingAssignment = u.generateBundleAssignmentRhoBound(valueationMatrix)
-#
-                #matchingNashBefore = u.calcNashWellFare(valueationMatrix, matchingAssignment)
-#
-                #matchingAlloc, matchingDonationList, matchingCounter = solver.findEFX(valueationMatrix, matchingAssignment)
-#
-                #matchingEnvy, _ = envyOfDonatedItems(valueationMatrix, matchingAlloc, matchingDonationList)
-#
-                #matchingNashAfter = u.calcNashWellFare(valueationMatrix, matchingAlloc)
-#
-                #matchingRentionMatrix[i-1,j] += matchingNashAfter / matchingNashBefore
-#
-                #if matchingEnvy:
-                #    matchingEnvyMatrix[i-1,j] += 1
-#
-                #if matchingCounter != 0:
-                #    matchingCounterMatrix[i-1,j] += matchingCounter
-#
-#
-                #
+                EF1Assignment = u.generateBundleAssignmentWithDraft(valueationMatrix)
 
-    savePath = p.Path("../../HeatMaps/").absolute().resolve()
-    u.writeToCSV(blindEnvyMatrix,savePath + "experiment3Envyblind")
-    #u.writeToCSV(EF1EnvyMatrix, "experiment3EF1")
-    #u.writeToCSV(matchingEnvyMatrix, "experiment3matching")
+                EF1NashBefore = u.calcNashWellFare(valueationMatrix,EF1Assignment)
+
+                EF1Alloc, EF1donationList, EF1counter = solver.multipleRuns(valueationMatrix, EF1Assignment)
+
+                EF1Envy, _ = envyOfDonatedItems(valueationMatrix, EF1Alloc, EF1donationList)
+                
+                EF1NashAfter = u.calcNashWellFare(valueationMatrix, EF1Alloc)
+
+                EF1RetentionMatrix[i-1,j] += EF1NashAfter / EF1NashBefore
+
+                if EF1Envy:
+                    EF1EnvyMatrix[i-1,j] += 1  
+                
+                if EF1counter != 0:
+                    EF1CounterMatrix[i-1,j] += EF1counter
+
+                matchingAssignment = u.generateBundleAssignmentRhoBound(valueationMatrix)
+
+                matchingNashBefore = u.calcNashWellFare(valueationMatrix, matchingAssignment)
+
+                matchingAlloc, matchingDonationList, matchingCounter = solver.multipleRuns(valueationMatrix, matchingAssignment)
+
+                matchingEnvy, _ = envyOfDonatedItems(valueationMatrix, matchingAlloc, matchingDonationList)
+
+                matchingNashAfter = u.calcNashWellFare(valueationMatrix, matchingAlloc)
+
+                matchingRentionMatrix[i-1,j] += matchingNashAfter / matchingNashBefore
+
+                if matchingEnvy:
+                    matchingEnvyMatrix[i-1,j] += 1
+
+                if matchingCounter != 0:
+                    matchingCounterMatrix[i-1,j] += matchingCounter
+
+
+    u.writeToCSV(blindEnvyMatrix,"experiment3Envyblind")
+    u.writeToCSV(EF1EnvyMatrix, "experiment3EF1")
+    u.writeToCSV(matchingEnvyMatrix, "experiment3matching")
 
     blindCounterMatrix /= numIterations
-    #EF1CounterMatrix /= numIterations
-    #matchingCounterMatrix /= numIterations
+    EF1CounterMatrix /= numIterations
+    matchingCounterMatrix /= numIterations
 
-    u.writeToCSV(blindCounterMatrix,savePath + "experiment4RepeatedRunsblind")
-    #u.writeToCSV(EF1CounterMatrix, "experiment4EF1")
-    #u.writeToCSV(matchingCounterMatrix ,"experiment4matching")
+    u.writeToCSV(blindCounterMatrix,"experiment4RepeatedRunsblind")
+    u.writeToCSV(EF1CounterMatrix, "experiment4EF1")
+    u.writeToCSV(matchingCounterMatrix ,"experiment4matching")
 
     blindEnvyMatrix = np.delete(blindEnvyMatrix,0,0)
-    #EF1EnvyMatrix = np.delete(EF1EnvyMatrix,0,0)
-    #matchingEnvyMatrix = np.delete(matchingEnvyMatrix,0,0)
+    EF1EnvyMatrix = np.delete(EF1EnvyMatrix,0,0)
+    matchingEnvyMatrix = np.delete(matchingEnvyMatrix,0,0)
 
     blindCounterMatrix = np.delete(blindCounterMatrix,0,0)
-    #EF1CounterMatrix = np.delete(EF1CounterMatrix,0,0)
-    #matchingCounterMatrix = np.delete(matchingCounterMatrix,0,0)
+    EF1CounterMatrix = np.delete(EF1CounterMatrix,0,0)
+    matchingCounterMatrix = np.delete(matchingCounterMatrix,0,0)
 
     u.plotHeatMap("experiment3blind",[x for x in range(2,maxPossibleAgents+1)], ratioList, blindEnvyMatrix)
-    #u.plotHeatMap("experiment3EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1EnvyMatrix)
-    #u.plotHeatMap("experiment3matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingEnvyMatrix)
+    u.plotHeatMap("experiment3EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1EnvyMatrix)
+    u.plotHeatMap("experiment3matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingEnvyMatrix)
 
     u.plotHeatMap("experiment4blind",[x for x in range(2,maxPossibleAgents+1)], ratioList, blindCounterMatrix)
-    #u.plotHeatMap("experiment4EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1CounterMatrix)
-    #u.plotHeatMap("experiment4matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingCounterMatrix)
+    u.plotHeatMap("experiment4EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1CounterMatrix)
+    u.plotHeatMap("experiment4matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingCounterMatrix)
 
     blindRetentionMatrix = (blindRetentionMatrix / numIterations) * 100
-    #EF1RetentionMatrix = (EF1RetentionMatrix / numIterations) * 100
-    #matchingRentionMatrix = (matchingRentionMatrix / numIterations) * 100
+    EF1RetentionMatrix = (EF1RetentionMatrix / numIterations) * 100
+    matchingRentionMatrix = (matchingRentionMatrix / numIterations) * 100
 
-    u.writeToCSV(blindRetentionMatrix,savePath + "experiment5Welfareblind")
-    #u.writeToCSV(EF1RetentionMatrix, "experiment5EF1")
-    #u.writeToCSV(matchingRentionMatrix, "experiment5matching")
+    u.writeToCSV(blindRetentionMatrix,"experiment5Welfareblind")
+    u.writeToCSV(EF1RetentionMatrix, "experiment5EF1")
+    u.writeToCSV(matchingRentionMatrix, "experiment5matching")
 
     blindRetentionMatrix = np.delete(blindRetentionMatrix,0,0)
-    #EF1RetentionMatrix = np.delete(EF1RetentionMatrix,0,0)
-    #matchingRentionMatrix = np.delete(matchingRentionMatrix,0,0)
+    EF1RetentionMatrix = np.delete(EF1RetentionMatrix,0,0)
+    matchingRentionMatrix = np.delete(matchingRentionMatrix,0,0)
 
     blindRetentionMatrix = np.max(blindRetentionMatrix) - blindRetentionMatrix
-    #EF1RetentionMatrix = np.max(EF1RetentionMatrix) - EF1RetentionMatrix
-    #matchingRentionMatrix = np.max(matchingRentionMatrix) - matchingRentionMatrix
+    EF1RetentionMatrix = np.max(EF1RetentionMatrix) - EF1RetentionMatrix
+    matchingRentionMatrix = np.max(matchingRentionMatrix) - matchingRentionMatrix
 
     u.plotHeatMap("experiment5blind",[x for x in range(2,maxPossibleAgents+1)], ratioList, blindRetentionMatrix)
-    #u.plotHeatMap("experiment5EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1RetentionMatrix)
-    #u.plotHeatMap("experiment5matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingRentionMatrix)
+    u.plotHeatMap("experiment5EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1RetentionMatrix)
+    u.plotHeatMap("experiment5matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingRentionMatrix)
 
 
 def envyOfDonatedItems(agentsValueaction, allocation, donationlist):
@@ -386,7 +383,6 @@ def calculateAggragateData2(allData):
     return [optEnvy, EF1Envy, matchingEnvy, calcRepeatedRunsAvg, EF1RepeatedRunsAvg, matchingRepeatedRunsAvg, EF1RepeatedRuns, matchingRepeatedRuns]
 
 def runFromData(dataPath, optDatapath, saveFileName):
-    print(optDatapath)
     allData = np.zeros([len(os.listdir(dataPath)),16])
     i = 0
     for file in os.listdir(dataPath):
@@ -462,9 +458,9 @@ if __name__ == "__main__":
 
     runExperiment1()
 
-    #runExperiment2()
+    runExperiment2()
     
-    #runExperiment3and4()
+    runExperiment3and4()
     
 
 

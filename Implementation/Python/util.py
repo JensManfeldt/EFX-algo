@@ -27,9 +27,7 @@ def calcNashWellFare(agentsEvaluations, bundleAssignment):
     n = agentsEvaluations.shape[0]
 
     for i in range(n):
-        #print(bundleAssignment.shape)
         agentValueation = sum(agentsEvaluations[i,:] * bundleAssignment[i,:])
-        #print("Agent : " + str(i) + " valueation is : " + str(agentValueation))
         
         agentValueation = pow(agentValueation,1/n)
         
@@ -61,7 +59,7 @@ def generateBundleAssignment(numAgents,numItems):
     return bundleAssignement
 
 def generateBlindDraft(agentsValueations):
-    #copy = np.matrix.copy(agentsValueations)
+    
     bundleAssignement = np.zeros([agentsValueations.shape[0],agentsValueations.shape[1]], dtype=int)
     for j in range(agentsValueations.shape[1]):
         agentToGive = j % agentsValueations.shape[0]
@@ -93,15 +91,6 @@ def generateBundleAssignmentWithDraftAndVariance(agentsValueations):
 def generateBundleAssignmentRhoBound(agentsValueactions):
 
     copy = np.matrix.copy(agentsValueactions)
-
-    # removeing zeros and make product to sum
-    #for i in range(copy.shape[0]):
-    #    for j in range(copy.shape[1]):
-    #        if copy[i,j] > 0:
-    #            copy[i,j] = np.log(copy[i,j])
-    #        else : 
-    #            copy[i,j] = np.finfo(float).eps
-
 
     row,col = scipy.optimize.linear_sum_assignment(copy,maximize=True)
     
@@ -171,7 +160,7 @@ def saveOptimalAlloction(filename, bundleAlloction, optNash, path):
                 file.write(str(bundleAlloction[i,j]) + "\n")
 
 def LoadoptimalExample(filename, numAgents, numItems, path):
-    with open(path + filename,'r') as file: 
+    with open(path + "/" + filename,'r') as file: 
         text = file.read()
         lines = text.split('\n')
         optNash = lines[0]
@@ -186,7 +175,7 @@ def writeToCSV(data, name):
     df.to_excel(name + ".xlsx",index=False)
 
 def plotHeatMap(title,yaxisLables,xaxisLables, dataMatrix):
-    #plt.figure(num=None,figsize=(1000,1000), dpi=100)
+    
     fig, ax = plt.subplots()
     im = ax.imshow(dataMatrix,cmap="BuPu")
 

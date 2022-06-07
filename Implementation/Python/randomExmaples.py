@@ -1,11 +1,12 @@
 import numpy as np
 import brute
 import util as u
+import pathlib as p
 
 np.random.seed(12345678)
 
 def makeAndSaveRandomProblem(numExamples):
-    path = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/randomExamples/randomExample"
+    path = str(p.Path("../../randomExamples/randomExample").absolute().resolve())
     savePath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/optimalRandom/"
     for i in range(numExamples):
         numAgents = np.random.randint(2,5)

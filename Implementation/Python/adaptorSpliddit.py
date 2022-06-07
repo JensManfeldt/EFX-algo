@@ -24,6 +24,3 @@ def create_valueation_matrix(datafile):
         valueationMatrix[x,y] = value[i]
 
     return valueationMatrix
-
-
-print(create_valueation_matrix("/home/jens/Skrivebord/F2022/bachelor/EFX-algo/DemoData/fakeData34273"))

@@ -1,9 +1,5 @@
 import numpy as np
 import util as u
-import adaptorSpliddit
-import os
-
-dataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/realData"
 
 class Brute:
 
@@ -51,21 +47,5 @@ class Brute:
 
         return welFare
 
-
-dataPath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/RealData/"
-savePath = "/home/jens/Skrivebord/F2022/bachelor/EFX-algo/optimalNashAllocSpliddit/"
-solvedWrong = ['79362','16585','54101','33729','56989','15810','31292','6518','53473','57815','15466','64536','53489','32484','9474','65533','3235','32723','1675','1105','4866','53471','30542','31422','33732','32490','6608','28512','53476','4435','53479','30543','70824','76342','3023','53346']
-for file in os.listdir(dataPath):
-#for file in solvedWrong:
-
-    valueationMatrix = adaptorSpliddit.create_valueation_matrix(dataPath + str(file))
-    problemTime = pow(valueationMatrix.shape[0],valueationMatrix.shape[1])
-    print("Working on problem " + str(file) + " with size :" + str(problemTime))
-    if problemTime >= 20000000:
-        print("Problem " + str(file) + " to big")
-        continue
-    b = Brute(valueationMatrix.shape[0],valueationMatrix.shape[1],valueationMatrix)
-    alloc, bestNash = b.findOptimalNash()
-    u.saveOptimalAlloction(file,alloc,bestNash, savePath)
 
 
