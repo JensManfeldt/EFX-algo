@@ -1,4 +1,3 @@
-from more_itertools import first
 import numpy as np
 import scipy.optimize
 import pandas as p
