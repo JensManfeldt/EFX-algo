@@ -6,12 +6,14 @@ if __name__ == '__main__':
     np.random.seed(112345)
 
     for i in range(500000):
+        if i % 100 == 0:
+            print(i) 
         numAgents = np.random.randint(2,50)
 
         numItems = np.random.randint(numAgents,numAgents*5+1)
         valueationMatrix = u.generateValueations(numAgents,numItems)
 
-        bundleAssignment = u.generateBundleAssignmentWithDraft(valueationMatrix)
+        bundleAssignment = u.generateBlindDraft(valueationMatrix)
 
         nashBefore = u.calcNashWellFare(valueationMatrix,bundleAssignment)
         

@@ -247,24 +247,26 @@ class EFXSolver:
         self.t[robustDemandBundle] = 1
 
     def updateFeasibilityGraph(self,touchedBundle, affectedAgents):
-        for i in affectedAgents:
+
+        for i in range(self.n):
+
             efxmaxIndex = int(np.argmax(self.agentsEFXValuations[i,:]))
             originalBundleValuation = self.agentsValuationOfBundle[i, i] 
 
-            if self.feasibilityGraph[i,touchedBundle] != 0: # You wanted the touched bundle, there was an edge
-                    efxmax = self.agentsEFXValuations[i,efxmaxIndex]
-                    for j in range(self.n): # Recalc all edges because you have new efxMAX
-                        if self.agentsValuationOfBundle[i,j] >= efxmax and self.agentsValuationOfBundle[i,j] > originalBundleValuation:
-                            self.feasibilityGraph[i,j] = pow(self.n,4) if self.t[j] == 1 else 1 
-                        else :
-                            self.feasibilityGraph[i,j] = 0
-                    if self.agentsValuationOfBundle[i,i] >= efxmax: # Special Case calc for you orginal bundle
-                        self.feasibilityGraph[i,i] = pow(self.n, 4) + pow(self.n, 2) if self.t[i] == 1 else pow(self.n, 2)
-                    else :
-                        self.feasibilityGraph[i,i] = 0
+            efxmax = self.agentsEFXValuations[i,efxmaxIndex]
 
-            else : # You wanted the bundle but it was not your efxmax. Only recalc on touchedbundle 
-                efxmax = self.agentsEFXValuations[i,efxmaxIndex]                   
+            if i in affectedAgents:             
+                for j in range(self.n): # Recalc all edges because you have new efxMAX
+                    if self.agentsValuationOfBundle[i,j] >= efxmax and self.agentsValuationOfBundle[i,j] > originalBundleValuation:
+                        self.feasibilityGraph[i,j] = pow(self.n,4) if self.t[j] == 1 else 1 
+                    else :
+                        self.feasibilityGraph[i,j] = 0
+                if self.agentsValuationOfBundle[i,i] >= efxmax: # Special Case calc for you orginal bundle
+                    self.feasibilityGraph[i,i] = pow(self.n, 4) + pow(self.n, 2) if self.t[i] == 1 else pow(self.n, 2)
+                else :
+                    self.feasibilityGraph[i,i] = 0
+
+            else: # See if the egde to touced bundle changes    
                 if self.agentsValuationOfBundle[i,touchedBundle] >= efxmax and self.agentsValuationOfBundle[i,touchedBundle] > originalBundleValuation:
                     self.feasibilityGraph[i,touchedBundle] = pow(self.n,4)
                 else :
