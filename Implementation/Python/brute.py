@@ -34,13 +34,9 @@ class Brute:
     def calcNashWelFare(self, agentsEvaluations, bundleAssignment):
         welFare = 1
         n = agentsEvaluations.shape[0]
-        #print("Agents Eval")
-        #print(agentsEvaluations)
-        #print("Bundle Assign")
-        #print(bundleAssignment)
+
         for i in range(n):
             agentValueation = sum(agentsEvaluations[i,:] * bundleAssignment[i,:])
-            #print("Agent : " + str(i) + " valueation is : " + str(agentValueation))
             agentValueation = pow(agentValueation,1/n)
             
             welFare *= agentValueation
