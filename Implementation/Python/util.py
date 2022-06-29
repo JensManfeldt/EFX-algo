@@ -91,6 +91,14 @@ def generateBundleAssignmentRhoBound(agentsValueactions):
 
     copy = np.matrix.copy(agentsValueactions)
 
+    # removeing zeros and make product to sum
+    for i in range(copy.shape[0]):
+        for j in range(copy.shape[1]):
+            if copy[i,j] > 0:
+                copy[i,j] = np.log(copy[i,j])
+            else : 
+                copy[i,j] = np.finfo(float).eps
+
     row,col = scipy.optimize.linear_sum_assignment(copy,maximize=True)
     
     copy = np.matrix.copy(agentsValueactions)

@@ -456,9 +456,9 @@ def aggergateDataWithDonationsExamples(realData, demoData, randomData):
 
 if __name__ == "__main__":
 
-    runExperiment1()
+    #runExperiment1()
 
-    runExperiment2()
+    #runExperiment2()
     
     runExperiment3and4()
     

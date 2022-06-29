@@ -83,8 +83,12 @@ class EFXSolver:
         self.setUp(agentsEval, bundleAssigment)
 
         self.feasibilityGraph = self.buildFeasibilityGraph()
+        print("1st iteration")
+        print(self.feasibilityGraph)
 
         while True:
+            print("New iteration")
+            print(self.feasibilityGraph)
 
             copy = np.matrix.copy(self.feasibilityGraph)
 
@@ -264,6 +268,7 @@ class EFXSolver:
                         self.feasibilityGraph[i,i] = 0
 
             else : # You wanted the bundle but it was not your efxmax. Only recalc on touchedbundle 
+                print("preben was here")
                 efxmax = self.agentsEFXValuations[i,efxmaxIndex]                   
                 if self.agentsValuationOfBundle[i,touchedBundle] >= efxmax and self.agentsValuationOfBundle[i,touchedBundle] > originalBundleValuation:
                     self.feasibilityGraph[i,touchedBundle] = pow(self.n,4)
@@ -299,5 +304,3 @@ def findEFX(valueationMatrix):
     alloc, donationList, counter = solver.multipleRuns(valueationMatrix,bundleAssignment)
 
     return alloc
-
-
