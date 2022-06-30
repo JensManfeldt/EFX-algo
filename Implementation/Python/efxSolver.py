@@ -83,12 +83,8 @@ class EFXSolver:
         self.setUp(agentsEval, bundleAssigment)
 
         self.feasibilityGraph = self.buildFeasibilityGraph()
-        print("1st iteration")
-        print(self.feasibilityGraph)
 
         while True:
-            print("New iteration")
-            print(self.feasibilityGraph)
 
             copy = np.matrix.copy(self.feasibilityGraph)
 

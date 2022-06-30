@@ -151,27 +151,32 @@ def runExperiment3and4():
     blindRetentionMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
     EF1RetentionMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
     matchingRentionMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
+    wrongRhoRentionMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
     
     blindRetentionMatrix[0,:] = ratioList
     EF1RetentionMatrix[0,:] = ratioList
     matchingRentionMatrix[0,:] = ratioList
+    wrongRhoRentionMatrix[0,:] = ratioList
 
     blindEnvyMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
     EF1EnvyMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
     matchingEnvyMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
+    wrongRhoEnvyMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
     
     blindEnvyMatrix[0,:] = ratioList
     EF1EnvyMatrix[0,:] = ratioList
     matchingEnvyMatrix[0,:] = ratioList
+    wrongRhoEnvyMatrix[0,:] = ratioList
 
     blindCounterMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
     EF1CounterMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
     matchingCounterMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
+    wrongRhoCounterMatrix = np.zeros([maxPossibleAgents,len(ratioList)])
 
     blindCounterMatrix[0,:] = ratioList
     EF1CounterMatrix[0,:] = ratioList
     matchingCounterMatrix[0,:] = ratioList
-
+    wrongRhoCounterMatrix[0,:] = ratioList
 
     solver = efxSolver.EFXSolver()
 
@@ -234,54 +239,84 @@ def runExperiment3and4():
                 if matchingCounter != 0:
                     matchingCounterMatrix[i-1,j] += matchingCounter
 
+                wrongRhoAssignment = u.rhoBoundWrong(valueationMatrix)
+
+                wrongRhoNashBefore = u.calcNashWellFare(valueationMatrix, wrongRhoAssignment)
+
+                wrongRhoAlloc, wrongRhoDonationList, wrongRhoCounter = solver.multipleRuns(valueationMatrix, wrongRhoAssignment)
+
+                wrongRhoEnvy, _ = envyOfDonatedItems(valueationMatrix, wrongRhoAlloc, wrongRhoDonationList)
+
+                wrongRhoNashAfter = u.calcNashWellFare(valueationMatrix, wrongRhoAlloc)
+
+                wrongRhoRentionMatrix[i-1,j] += wrongRhoNashAfter / wrongRhoNashBefore
+
+                if wrongRhoEnvy:
+                    wrongRhoEnvyMatrix[i-1,j] += 1
+
+                if wrongRhoCounter != 0:
+                    wrongRhoCounterMatrix[i-1,j] += wrongRhoCounter
+
 
     u.writeToCSV(blindEnvyMatrix,"experiment3Envyblind")
     u.writeToCSV(EF1EnvyMatrix, "experiment3EF1")
     u.writeToCSV(matchingEnvyMatrix, "experiment3matching")
+    u.writeToCSV(wrongRhoEnvyMatrix, "experiment3matchingSum")
 
     blindCounterMatrix /= numIterations
     EF1CounterMatrix /= numIterations
     matchingCounterMatrix /= numIterations
+    wrongRhoCounterMatrix /= numIterations
 
     u.writeToCSV(blindCounterMatrix,"experiment4RepeatedRunsblind")
     u.writeToCSV(EF1CounterMatrix, "experiment4EF1")
     u.writeToCSV(matchingCounterMatrix ,"experiment4matching")
+    u.writeToCSV(wrongRhoCounterMatrix ,"experiment4matchingSum")
 
     blindEnvyMatrix = np.delete(blindEnvyMatrix,0,0)
     EF1EnvyMatrix = np.delete(EF1EnvyMatrix,0,0)
     matchingEnvyMatrix = np.delete(matchingEnvyMatrix,0,0)
+    wrongRhoEnvyMatrix = np.delete(wrongRhoEnvyMatrix,0,0)
 
     blindCounterMatrix = np.delete(blindCounterMatrix,0,0)
     EF1CounterMatrix = np.delete(EF1CounterMatrix,0,0)
     matchingCounterMatrix = np.delete(matchingCounterMatrix,0,0)
+    wrongRhoCounterMatrix = np.delete(wrongRhoCounterMatrix,0,0)
 
     u.plotHeatMap("experiment3blind",[x for x in range(2,maxPossibleAgents+1)], ratioList, blindEnvyMatrix)
     u.plotHeatMap("experiment3EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1EnvyMatrix)
     u.plotHeatMap("experiment3matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingEnvyMatrix)
+    u.plotHeatMap("experiment3matchingSum",[x for x in range(2,maxPossibleAgents+1)], ratioList, wrongRhoEnvyMatrix)
 
     u.plotHeatMap("experiment4blind",[x for x in range(2,maxPossibleAgents+1)], ratioList, blindCounterMatrix)
     u.plotHeatMap("experiment4EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1CounterMatrix)
     u.plotHeatMap("experiment4matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingCounterMatrix)
+    u.plotHeatMap("experiment4matchingSum",[x for x in range(2,maxPossibleAgents+1)], ratioList, wrongRhoCounterMatrix)
 
     blindRetentionMatrix = (blindRetentionMatrix / numIterations) * 100
     EF1RetentionMatrix = (EF1RetentionMatrix / numIterations) * 100
     matchingRentionMatrix = (matchingRentionMatrix / numIterations) * 100
+    wrongRhoRentionMatrix = (wrongRhoRentionMatrix / numIterations) * 100
 
     u.writeToCSV(blindRetentionMatrix,"experiment5Welfareblind")
     u.writeToCSV(EF1RetentionMatrix, "experiment5EF1")
     u.writeToCSV(matchingRentionMatrix, "experiment5matching")
+    u.writeToCSV(wrongRhoRentionMatrix, "experiment5matchingSum")
 
     blindRetentionMatrix = np.delete(blindRetentionMatrix,0,0)
     EF1RetentionMatrix = np.delete(EF1RetentionMatrix,0,0)
     matchingRentionMatrix = np.delete(matchingRentionMatrix,0,0)
+    wrongRhoRentionMatrix = np.delete(wrongRhoRentionMatrix,0,0)
 
     blindRetentionMatrix = np.max(blindRetentionMatrix) - blindRetentionMatrix
     EF1RetentionMatrix = np.max(EF1RetentionMatrix) - EF1RetentionMatrix
     matchingRentionMatrix = np.max(matchingRentionMatrix) - matchingRentionMatrix
+    wrongRhoRentionMatrix = np.max(wrongRhoRentionMatrix) - wrongRhoRentionMatrix
 
     u.plotHeatMap("experiment5blind",[x for x in range(2,maxPossibleAgents+1)], ratioList, blindRetentionMatrix)
     u.plotHeatMap("experiment5EF1",[x for x in range(2,maxPossibleAgents+1)], ratioList, EF1RetentionMatrix)
     u.plotHeatMap("experiment5matching",[x for x in range(2,maxPossibleAgents+1)], ratioList, matchingRentionMatrix)
+    u.plotHeatMap("experiment5matchingSum",[x for x in range(2,maxPossibleAgents+1)], ratioList, wrongRhoRentionMatrix)
 
 
 def envyOfDonatedItems(agentsValueaction, allocation, donationlist):

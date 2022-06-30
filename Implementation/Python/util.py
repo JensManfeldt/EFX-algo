@@ -120,6 +120,32 @@ def generateBundleAssignmentRhoBound(agentsValueactions):
 
     return bundleAssignment
 
+def rhoBoundWrong(agentsValueactions):
+
+    copy = np.matrix.copy(agentsValueactions)
+
+    row,col = scipy.optimize.linear_sum_assignment(copy,maximize=True)
+    
+    copy = np.matrix.copy(agentsValueactions)
+    
+    bundleAssignment = np.zeros(agentsValueactions.shape)
+
+    for i in range(len(row)):
+        bundleAssignment[row[i],col[i]] = 1
+        copy[:,col[i]] = -1
+    
+    for j in range(agentsValueactions.shape[1] - agentsValueactions.shape[0]):
+        agentToPick = j % agentsValueactions.shape[0]
+
+        bestItem = int(np.argmax(copy[agentToPick,:]))
+        
+        bundleAssignment[agentToPick,bestItem] = 1
+
+        copy[:,bestItem] = -1
+
+    return bundleAssignment
+
+
 def saveProblem(filename, agentsValueations,bundleAssignment):
     with open("/home/jens/Skrivebord/F2022/bachelor/EFX-algo/InterestingExamples/" + str(filename), "w+") as file: 
         file.write("Values\n")
